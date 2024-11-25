@@ -24,6 +24,50 @@
             margin-bottom: 20px;
         }
 
+        /* Стили формы */
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #ffd700;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #444; /* Линия границы */
+            border-radius: 5px;
+            background-color: #292929; /* Тёмный фон */
+            color: #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+            box-shadow: 0 0 5px #ffd700;
+        }
+
+        select:hover, button:hover {
+            background-color: #444; /* Ярче при наведении */
+        }
+
+        button {
+            background-color: #ffd700; /* Золотистый фон кнопки */
+            color: #1c1c1c; /* Чёрный текст */
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #e5c100; /* Более светлый золотистый */
+        }
+
         /* Стили таблицы */
         table {
             width: 90%;
@@ -58,6 +102,26 @@
             background-color: #444; /* Более яркий фон строки при наведении */
         }
 
+        /* Ссылка добавления записи */
+        a {
+            display: block;
+            text-align: center;
+            padding: 10px 15px;
+            width: 200px;
+            margin: 0 auto;
+            background-color: #ffd700;
+            color: #1c1c1c;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #e5c100;
+            box-shadow: 0 0 5px #ffd700;
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             table {
@@ -72,17 +136,31 @@
 </head>
 <body>
     <h1>Список записей о потерях нефти</h1>
+    <form method="get">
+        <label for="oil_type">Фильтр по типу нефти:</label>
+        <select name="oil_type" id="oil_type">
+            <option value="">Все</option>
+            <option value="Light">Лёгкая нефть</option>
+            <option value="Heavy">Тяжёлая нефть</option>
+            <option value="Gasoline">Бензин</option>
+            <option value="Diesel">Дизельное топливо</option>
+        </select>
+        <button type="submit">Применить</button>
+    </form>
+
     <table>
         <tr>
             <th>Дата</th>
             <th>Местоположение</th>
             <th>Тип нефти</th>
-            <th>Оценочная потеря (тонн)</th>
-            <th>Фактическая потеря (тонн)</th>
+            <th>Оценочная потеря</th>
+            <th>Фактическая потеря</th>
         </tr>
         {% for record in records %}
         <tr>
-            <td>{{ record.date }}</td>
+            <td>
+                <a href="/record/{{record.id}}">{{ record.date }}</a>
+            </td>
             <td>{{ record.location }}</td>
             <td>{{ record.oil_type }}</td>
             <td>{{ record.estimated_loss }}</td>
@@ -90,5 +168,6 @@
         </tr>
         {% endfor %}
     </table>
+    <a href="{% url 'create_record' %}">Добавить новую запись</a>
 </body>
 </html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детальная информация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #292929;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            color: #ffd700;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .record {
+            display: flex;
+            margin: 15px 0;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #383838;
+            border-radius: 5px;
+        }
+
+        .record label {
+            font-weight: bold;
+            width: 150px;
+            color: #ffd700;
+        }
+
+        .record span {
+            color: #f0f0f0;
+            font-size: 1.1em;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .actions a {
+            color: #272727;
+            background-color: #ffd700;
+            text-decoration: none;
+            padding: 12px 25px;
+            margin: 0 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .actions a:hover {
+            background-color: #e5c100;
+            color: #1c1c1c;
+        }
+
+        .actions a:active {
+            background-color: #b38b00;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Детали записи</h1>
+        <div class="record">
+            <label>Дата:</label> <span>{{ record.date }}</span>
+        </div>
+        <div class="record">
+            <label>Местоположение:</label> <span>{{ record.location }}</span>
+        </div>
+        <div class="record">
+            <label>Тип нефти:</label> <span>{{ record.oil_type }}</span>
+        </div>
+        <div class="record">
+            <label>Оценочная потеря (тонн):</label> <span>{{ record.estimated_loss }}</span>
+        </div>
+        <div class="record">
+            <label>Фактическая потеря (тонн):</label> <span>{{ record.actual_loss }}</span>
+        </div>
+        <div class="record">
+            <label>Разница (тонн):</label> <span>{{ record.loss_difference }}</span>
+        </div>
+        <div class="record">
+            <label>Описание:</label> <span>{{ record.description }}</span>
+        </div>
+        <div class="actions">
+            <a href="{% url 'index' %}">Назад</a>
+            <a href="{% url 'edit_record' record.id %}">Редактировать</a>
+        </div>
+    </div>
+</body>
+</html>
