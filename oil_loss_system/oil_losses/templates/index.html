@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет потерь нефти</title>
+    <style>
+        /* Основной стиль страницы */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1c1c1c; /* Тёмный фон */
+            color: #f0f0f0; /* Светлый текст */
+            line-height: 1.6;
+        }
+
+        /* Заголовок */
+        h1 {
+            text-align: center;
+            padding: 20px;
+            color: #ffd700; /* Золотистый цвет */
+            border-bottom: 2px solid #ffd700;
+            margin-bottom: 20px;
+        }
+
+        /* Стили таблицы */
+        table {
+            width: 90%;
+            margin: 0 auto 40px auto;
+            border-collapse: collapse;
+            background-color: #292929; /* Тёмно-серый фон таблицы */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #444; /* Линии таблицы */
+        }
+
+        th {
+            background-color: #333; /* Тёмный фон заголовков таблицы */
+            color: #ffd700; /* Золотистый текст */
+        }
+
+        td {
+            color: #f0f0f0;
+        }
+
+        /* Чередование строк */
+        tr:nth-child(even) {
+            background-color: #242424; /* Ещё темнее для чёткости */
+        }
+
+        /* Эффект при наведении */
+        tr:hover {
+            background-color: #444; /* Более яркий фон строки при наведении */
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+            th, td {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Список записей о потерях нефти</h1>
+    <table>
+        <tr>
+            <th>Дата</th>
+            <th>Местоположение</th>
+            <th>Тип нефти</th>
+            <th>Оценочная потеря (тонн)</th>
+            <th>Фактическая потеря (тонн)</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.date }}</td>
+            <td>{{ record.location }}</td>
+            <td>{{ record.oil_type }}</td>
+            <td>{{ record.estimated_loss }}</td>
+            <td>{{ record.actual_loss }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
