@@ -135,6 +135,8 @@
     </style>
 </head>
 <body>
+    <h1>Добро пожаловать, {{ user.username }}!</h1>
+    <a href="{% url 'logout' %}">Выйти</a>
     <h1>Список записей о потерях нефти</h1>
     <form method="get">
         <label for="oil_type">Фильтр по типу нефти:</label>
