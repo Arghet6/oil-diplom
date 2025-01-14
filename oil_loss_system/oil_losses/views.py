@@ -4,7 +4,8 @@ from django.shortcuts import render, redirect
 from .forms import OilLossRecordForm
 from django.contrib.auth import login
 from .forms import UserRegisterForm
-
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 def index(request):
     oil_type = request.GET.get('oil_type')
@@ -61,4 +62,20 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
+
+def home(request):
+    # Логика для страницы "Главная"
+    return render(request, 'home.html')
+
+def calculations(request):
+    # Логика для страницы расчетов
+    return render(request, 'calculations.html')
+
+def archive(request):
+    # Логика для страницы архива
+    return render(request, 'archive.html')
+
+def logout_view(request):
+    logout(request)  # Выход пользователя
+    return redirect('login')  # Перенаправление на страницу входа
 

@@ -136,45 +136,10 @@
     </style>
 </head>
 <body>
-
  {% include 'header.html' %}
 
-    <h1>Список записей о потерях нефти</h1>
+    <h1>Главная</h1>
 
-    <!-- Форма фильтрации -->
-    <form method="get">
-        <label for="oil_type">Фильтр по типу нефти:</label>
-        <select name="oil_type" id="oil_type">
-            <option value="">Все</option>
-            <option value="Light">Лёгкая нефть</option>
-            <option value="Heavy">Тяжёлая нефть</option>
-            <option value="Gasoline">Бензин</option>
-            <option value="Diesel">Дизельное топливо</option>
-        </select>
-        <button type="submit">Применить</button>
-    </form>
 
-    <!-- Таблица данных -->
-    <table>
-        <tr>
-            <th>Дата</th>
-            <th>Местоположение</th>
-            <th>Тип нефти</th>
-            <th>Оценочная потеря</th>
-            <th>Фактическая потеря</th>
-        </tr>
-        {% for record in records %}
-        <tr>
-            <td><a href="/record/{{ record.id }}">{{ record.date }}</a></td>
-            <td>{{ record.location }}</td>
-            <td>{{ record.oil_type }}</td>
-            <td>{{ record.estimated_loss }}</td>
-            <td>{{ record.actual_loss }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <!-- Ссылка для добавления новой записи -->
-    <a href="{% url 'create_record' %}" class="add-record-link">Добавить новую запись</a>
 </body>
 </html>

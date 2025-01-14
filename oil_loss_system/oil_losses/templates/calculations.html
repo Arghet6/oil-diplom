@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет потерь нефти</title>
+     <script src="{% static 'js/script.js' %}" defer></script>
+    <style>
+        /* Основной стиль страницы */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1c1c1c;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        /* Фиксированный header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 20px; /* Увеличен padding для предотвращения выхода элементов за пределы */
+            box-sizing: border-box; /* Учёт padding в общей ширине */
+            background-color: #292929;
+            border-bottom: 2px solid #ffd700;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Кнопка выхода */
+        .logout-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffd700;
+            color: #1c1c1c;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #e5c100;
+        }
+
+        /* Контейнер для контента */
+        .content-container {
+            margin-top: 80px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Блоки расчетов */
+        .calculation-block {
+            display: none;
+            background-color: #292929;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Кнопки калькулятора */
+        .calc-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffd700;
+            color: #1c1c1c;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .calc-button:hover {
+            background-color: #e5c100;
+        }
+    </style>
+
+</head>
+<body>
+    {% include 'header.html' %}
+    <script>
+                 function toggleCalculation(blockId) {
+            const blocks = document.querySelectorAll('.calculation-block');
+            blocks.forEach(block => {
+                block.style.display = (block.id === blockId) ?
+                                      (block.style.display === 'none' ? 'block' : 'none') : 'none';
+            });
+        }
+    </script>
+
+ <div class="content-container">
+    <h1>Расчет потерь нефти и нефтепродуктов</h1>
+
+    <div class="button-container">
+        <button class="calc-button" onclick="toggleCalculation('calc1')">Потери автомобильного бензина при различных способах налива</button>
+        <button class="calc-button" onclick="toggleCalculation('calc2')">Потери объема бензина, вытекающего через коррозионный свищ</button>
+        <button class="calc-button" onclick="toggleCalculation('calc3')">Потери нефти от испарения с поверхности воды</button>
+    </div>
+<!--1-->
+    <div id="calc1" class="calculation-block">
+        <h2>Потери автомобильного бензина при различных способах налива</h2>
+        <p>Здесь будет форма или информация для расчета 1.</p>
+    </div>
+<!--2-->
+<div id="calc2" class="calculation-block">
+    <h2>Потери объема бензина, вытекающего через коррозионный свищ</h2>
+    <form id="corrosionForm" style="display: flex; flex-direction: column; gap: 10px;">
+        <label for="diameter">Диаметр отверстия (мм):</label>
+        <input type="number" id="diameter" value="1" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="distanceFromBottom">Расстояние от дна (м):</label>
+        <input type="number" id="distanceFromBottom" value="1.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="fluidHeight">Уровень жидкости (м):</label>
+        <input type="number" id="fluidHeight" value="7" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="viscosity">Кинематическая вязкость (м²/с):</label>
+        <input type="number" id="viscosity" value="0.00000085" step="0.00000001" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="duration">Время истечения (часы):</label>
+        <input type="number" id="duration" value="8" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <button type="button" onclick="calculateOilLoss()" >Рассчитать</button>
+    </form>
+
+    <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
+</div>
+
+<script>
+    function calculateOilLoss() {
+        const diameter = parseFloat(document.getElementById('diameter').value) / 1000; // мм в метры
+        const distanceFromBottom = parseFloat(document.getElementById('distanceFromBottom').value);
+        const fluidHeight = parseFloat(document.getElementById('fluidHeight').value);
+        const viscosity = parseFloat(document.getElementById('viscosity').value);  // Вязкость
+        const duration = parseFloat(document.getElementById('duration').value);
+
+        // Напор
+        const deltaH = fluidHeight - distanceFromBottom;
+
+        // Площадь сечения отверстия
+        const area = 0.25 * Math.PI * Math.pow(diameter, 2);
+
+        // Периметр отверстия
+        const perimeter = Math.PI * diameter;
+
+        // Характерный линейный размер
+        const L = (4 * area) / perimeter;
+
+        // Число Рейнольдса
+        const re = (diameter * Math.sqrt(2 * 9.81 * deltaH)) / viscosity;
+
+        // Коэффициент расхода
+        const mu = 0.592 + deltaH / Math.pow(re, 0.5);
+
+        // Расход бензина через отверстие (м³/ч)
+        const flowRate = mu * area * Math.sqrt(2 * 9.81 * deltaH);
+
+        // Объем потерь за заданный период (м³)
+        const volumeLoss = flowRate * duration;
+
+        // Вывод результата
+        document.getElementById('result').innerText = `Объем потерь: ${volumeLoss.toFixed(3)} м³`;
+    }
+</script>
+    <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
+</div>
+
+<script>
+    function calculateOilLoss() {
+        const diameter = parseFloat(document.getElementById('diameter').value) / 1000; // мм в метры
+        const distanceFromBottom = parseFloat(document.getElementById('distanceFromBottom').value);
+        const fluidHeight = parseFloat(document.getElementById('fluidHeight').value);
+        const viscosity = parseFloat(document.getElementById('viscosity').value);
+        const duration = parseFloat(document.getElementById('duration').value);
+
+        // Напор
+        const deltaH = fluidHeight - distanceFromBottom;
+
+        // Площадь сечения отверстия
+        const area = 0.25 * Math.PI * Math.pow(diameter, 2);
+
+        // Периметр отверстия
+        const perimeter = Math.PI * diameter;
+
+        // Характерный линейный размер
+        const L = (4 * area) / perimeter;
+
+        // Число Рейнольдса
+        const re = (diameter * Math.sqrt(2 * 9.81 * deltaH)) / viscosity;
+
+        // Вывод промежуточных значений
+        console.log('deltaH:', deltaH);
+        console.log('Area:', area);
+        console.log('Perimeter:', perimeter);
+        console.log('L:', L);
+        console.log('Re:', re);
+
+        // Коэффициент расхода (если Re очень малое, это может вызвать проблему)
+        const mu = 0.592 + deltaH / Math.pow(re, 0.5);
+
+        // Расход бензина через отверстие (м³/ч)
+        const flowRate = mu * area * Math.sqrt(2 * 9.81 * deltaH);
+
+        // Вывод промежуточных значений
+        console.log('mu:', mu);
+        console.log('FlowRate:', flowRate);
+
+        // Объем потерь за заданный период (м³)
+        const volumeLoss = flowRate * duration;
+
+        // Вывод результата
+        document.getElementById('result').innerText = `Объем потерь: ${volumeLoss.toFixed(3)} м³`;
+    }
+</script>
+<!--3-->
+        <div id="calc3" class="calculation-block">
+            <h2>Потери нефти от испарения с поверхности воды</h2>
+            <p>Здесь будет форма или информация для расчета 3.</p>
+        </div>
+    </div>
+
+</body>
+</html>
