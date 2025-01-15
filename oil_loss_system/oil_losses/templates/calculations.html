@@ -111,10 +111,60 @@
         </div>
 
         <!--1-->
-        <div id="calc1" class="calculation-block">
-            <h2>Потери автомобильного бензина при различных способах налива</h2>
-            <p>Здесь будет форма или информация для расчета 1.</p>
-        </div>
+<div id="calc1" class="calculation-block">
+    <h2>Потери автомобильного бензина при различных способах налива</h2>
+    <form id="fuelLossForm" style="display: flex; flex-direction: column; gap: 10px;">
+        <label for="volume">Объём цистерны (м³):</label>
+        <input type="number" id="volume" value="8.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="fillTime">Время налива цистерны (часы):</label>
+        <input type="number" id="fillTime" value="0.213" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="vaporPressure">Давление насыщенных паров бензина (Па):</label>
+        <input type="number" id="vaporPressure" value="40000" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="vaporTemp">Температура бензина при наливе (К):</label>
+        <input type="number" id="vaporTemp" value="295" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="initialBoilingTemp">Температура начала кипения (К):</label>
+        <input type="number" id="initialBoilingTemp" value="319" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="flowRate">Расход налива (м³/ч):</label>
+        <input type="number" id="flowRate" value="40" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="pressure">Атмосферное давление (Па):</label>
+        <input type="number" id="pressure" value="101320" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <button type="button" onclick="calculateFuelLoss()">Рассчитать</button>
+    </form>
+
+    <p id="fuelLossResult" style="margin-top: 20px; font-weight: bold;"></p>
+</div>
+
+<script>
+    function calculateFuelLoss() {
+        const volume = parseFloat(document.getElementById('volume').value);
+        const fillTime = parseFloat(document.getElementById('fillTime').value);
+        const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
+        const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
+        const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
+        const flowRate = parseFloat(document.getElementById('flowRate').value);
+        const pressure = parseFloat(document.getElementById('pressure').value);
+
+        // Плотность паров бензина
+        const vaporDensity = (pressure - 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
+
+        // Коэффициент k при открытом наливе
+        const k = 0.7 + 0.213 ** (1/3);
+
+        // Потери бензина при открытом наливе
+        const fuelLoss = k * flowRate * (vaporPressure / pressure) * vaporDensity * fillTime;
+
+        // Вывод результата
+        document.getElementById('fuelLossResult').innerText = `Потери бензина: ${fuelLoss.toFixed(3)} кг`;
+    }
+</script>
+
 
         <!--2-->
         <div id="calc2" class="calculation-block">
@@ -141,12 +191,7 @@
             <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
         </div>
 
-        <!--3-->
-        <div id="calc3" class="calculation-block">
-            <h2>Потери нефти от испарения с поверхности воды</h2>
-            <p>Здесь будет форма или информация для расчета 3.</p>
-        </div>
-    </div>
+
 
     <script>
         function calculateOilLoss() {
@@ -184,5 +229,72 @@
             document.getElementById('result').innerText = `Объем потерь: ${volumeLoss.toFixed(3)} м³`;
         }
     </script>
+        <!--3-->
+<div id="calc3" class="calculation-block">
+    <h2>Потери нефти от испарения с поверхности воды</h2>
+    <form id="oilEvaporationForm" style="display: flex; flex-direction: column; gap: 10px;">
+        <label for="temperature">Температура нефти (К):</label>
+        <input type="number" id="temperature" value="19" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="densityStandard">Плотность нефти при стандартных условиях (кг/м³):</label>
+        <input type="number" id="densityStandard" value="865" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="viscosity293">Кинематическая вязкость нефти при 293К (м²/с):</label>
+        <input type="number" id="viscosity293" value="0.8e-4" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="viscosity323">Кинематическая вязкость нефти при 323К (м²/с):</label>
+        <input type="number" id="viscosity323" value="0.55e-4" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="duration">Продолжительность испарения (часы):</label>
+        <input type="number" id="duration" value="20" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="evaporationRate">Скорость ветра (м/с):</label>
+        <input type="number" id="evaporationRate" value="0.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="area">Площадь испарения (м²):</label>
+        <input type="number" id="area" value="878" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <button type="button" onclick="calculateOilEvaporationLoss()">Рассчитать</button>
+    </form>
+
+    <p id="oilEvaporationResult" style="margin-top: 20px; font-weight: bold;"></p>
+</div>
+
+<script>
+function calculateOilEvaporationLoss() {
+    const temperature = parseFloat(document.getElementById('temperature').value);
+    const densityStandard = parseFloat(document.getElementById('densityStandard').value);
+    const viscosity293 = parseFloat(document.getElementById('viscosity293').value);
+    const viscosity323 = parseFloat(document.getElementById('viscosity323').value);
+    const duration = parseFloat(document.getElementById('duration').value);
+    const evaporationRate = parseFloat(document.getElementById('evaporationRate').value);
+    const area = parseFloat(document.getElementById('area').value);
+
+    // Температурная поправка
+    const betaT = 0.000793;
+    const density323 = densityStandard / (1 + betaT * (323 - 293));
+
+    // Динамическая вязкость
+    const mu293 = viscosity293 * densityStandard;
+    const mu323 = viscosity323 * density323;
+
+    // Массовая доля углеводородов
+    const Phi = Math.pow((69.2e-3 * mu323 - 45.8e-3) / (69.2e-3 * mu293 - 45.8e-3), 0.67);
+
+    // Коэффициент испарения
+    const sigmaN = (Phi * duration) / (5170 * (2 - Math.pow(0.5, 0.38) * Math.pow(19, -1.75) + duration));
+
+    // Потери нефти от испарения (в кг)
+    const oilLoss = sigmaN * area * density323;
+
+    // Вывод результата
+    document.getElementById('oilEvaporationResult').innerText = `Потери нефти: ${oilLoss.toFixed(1)} кг`;
+}
+
+</script>
+
+
+
+    </div>
 </body>
 </html>
