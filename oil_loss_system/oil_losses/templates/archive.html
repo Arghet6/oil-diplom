@@ -142,13 +142,12 @@
 
     <!-- Форма фильтрации -->
     <form method="get">
-        <label for="oil_type">Фильтр по типу нефти:</label>
+        <label for="oil_type">Фильтр потерь:</label>
         <select name="oil_type" id="oil_type">
             <option value="">Все</option>
-            <option value="Light">Лёгкая нефть</option>
-            <option value="Heavy">Тяжёлая нефть</option>
-            <option value="Gasoline">Бензин</option>
-            <option value="Diesel">Дизельное топливо</option>
+            <option value="Light">При различных наливах нефти</option>
+            <option value="Heavy">От испарения с поверхности воды</option>
+            <option value="Gasoline">При вытекании через коррозионнный свищ</option>
         </select>
         <button type="submit">Применить</button>
     </form>
