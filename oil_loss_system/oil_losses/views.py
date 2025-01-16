@@ -6,6 +6,9 @@ from django.contrib.auth import login
 from .forms import UserRegisterForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from .forms import FuelLossForm, CorrosionLossForm, OilEvaporationLossForm
+from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
+
 
 def index(request):
     oil_type = request.GET.get('oil_type')
@@ -78,4 +81,42 @@ def archive(request):
 def logout_view(request):
     logout(request)  # Выход пользователя
     return redirect('login')  # Перенаправление на страницу входа
+
+def fuel_loss_calculation(request):
+    if request.method == 'POST':
+        form = FuelLossForm(request.POST)
+        if form.is_valid():
+            # Сохраняем данные в базу данных
+            calculation = form.save(commit=False)
+            # Выполняем расчет (например, используя вашу функцию calculateFuelLoss)
+            calculation.calculated_loss = ...  # Ваш расчет
+            calculation.save()
+            return redirect('success_page')  # Перенаправляем на страницу успеха
+    else:
+        form = FuelLossForm()
+    return render(request, 'fuel_loss_form.html', {'form': form})
+
+def corrosion_loss_calculation(request):
+    if request.method == 'POST':
+        form = CorrosionLossForm(request.POST)
+        if form.is_valid():
+            calculation = form.save(commit=False)
+            calculation.calculated_loss = ...  # Ваш расчет
+            calculation.save()
+            return redirect('success_page')
+    else:
+        form = CorrosionLossForm()
+    return render(request, 'corrosion_loss_form.html', {'form': form})
+
+def oil_evaporation_loss_calculation(request):
+    if request.method == 'POST':
+        form = OilEvaporationLossForm(request.POST)
+        if form.is_valid():
+            calculation = form.save(commit=False)
+            calculation.calculated_loss = ...  # Ваш расчет
+            calculation.save()
+            return redirect('success_page')
+    else:
+        form = OilEvaporationLossForm()
+    return render(request, 'oil_evaporation_form.html', {'form': form})
 

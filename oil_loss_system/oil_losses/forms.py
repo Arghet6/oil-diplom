@@ -1,5 +1,6 @@
 from django import forms
 from .models import OilLossRecord
+from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
 
 class OilLossRecordForm(forms.ModelForm):
     class Meta:
@@ -17,3 +18,18 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class FuelLossForm(forms.ModelForm):
+    class Meta:
+        model = FuelLossCalculation
+        fields = '__all__'
+
+class CorrosionLossForm(forms.ModelForm):
+    class Meta:
+        model = CorrosionLossCalculation
+        fields = '__all__'
+
+class OilEvaporationLossForm(forms.ModelForm):
+    class Meta:
+        model = OilEvaporationLossCalculation
+        fields = '__all__'
