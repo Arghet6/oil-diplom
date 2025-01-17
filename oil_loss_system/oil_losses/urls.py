@@ -21,5 +21,7 @@ urlpatterns = [
     path('fuel_loss_detail/<int:id>/', views.fuel_loss_detail, name='fuel_loss_detail'),
     path('corrosion_loss_detail/<int:id>/', views.corrosion_loss_detail, name='corrosion_loss_detail'),
     path('oil_evaporation_loss_detail/<int:id>/', views.oil_evaporation_loss_detail, name='oil_evaporation_loss_detail'),
+    path('export_csv/', views.export_csv, name='export_csv'),
+    path('export_excel/', views.export_excel, name='export_excel'),
 ]
 

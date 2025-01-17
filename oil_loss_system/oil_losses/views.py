@@ -1,3 +1,4 @@
+import pandas as pd
 from django.shortcuts import render, get_object_or_404
 from .models import OilLossRecord
 from django.shortcuts import render, redirect
@@ -9,10 +10,9 @@ from django.shortcuts import redirect
 from .forms import FuelLossForm, CorrosionLossForm, OilEvaporationLossForm
 import json
 from django.http import JsonResponse
-from .models import FuelLossCalculation
-from .models import CorrosionLossCalculation
-from .models import OilEvaporationLossCalculation
 from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
+from django.http import HttpResponse
+
 
 def index(request):
     oil_type = request.GET.get('oil_type')
@@ -162,16 +162,29 @@ def oil_evaporation_loss_calculation(request):
 # архив
 
 def archive(request):
+    # Получаем параметр фильтра из GET-запроса
+    calculation_type = request.GET.get('calculation_type', '')
     # Получаем все записи из каждой модели
     fuel_loss_calculations = FuelLossCalculation.objects.all()
     corrosion_loss_calculations = CorrosionLossCalculation.objects.all()
     oil_evaporation_loss_calculations = OilEvaporationLossCalculation.objects.all()
+
+    if calculation_type == 'fuel_loss':
+        corrosion_loss_calculations = []
+        oil_evaporation_loss_calculations = []
+    elif calculation_type == 'corrosion_loss':
+        fuel_loss_calculations = []
+        oil_evaporation_loss_calculations = []
+    elif calculation_type == 'oil_evaporation_loss':
+        fuel_loss_calculations = []
+        corrosion_loss_calculations = []
 
     # Передаем данные в шаблон
     context = {
         'fuel_loss_calculations': fuel_loss_calculations,
         'corrosion_loss_calculations': corrosion_loss_calculations,
         'oil_evaporation_loss_calculations': oil_evaporation_loss_calculations,
+        'selected_calculation_type': calculation_type,  # Для сохранения выбранного значения в форме
     }
     return render(request, 'archive.html', context)
 
@@ -186,4 +199,113 @@ def corrosion_loss_detail(request, id):
 def oil_evaporation_loss_detail(request, id):
     record = OilEvaporationLossCalculation.objects.get(id=id)
     return render(request, 'oil_evaporation_loss_detail.html', {'record': record})
+
+import pandas as pd
+from django.http import HttpResponse
+from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
+
+# Словарь для перевода названий столбцов на русский
+COLUMN_NAMES_RU = {
+    'date': 'Дата',
+    'volume': 'Объём цистерны (м³)',
+    'fill_time': 'Время налива (часы)',
+    'vapor_pressure': 'Давление паров (Па)',
+    'vapor_temp': 'Температура бензина (К)',
+    'initial_boiling_temp': 'Температура кипения (К)',
+    'flow_rate': 'Расход налива (м³/ч)',
+    'pressure': 'Атмосферное давление (Па)',
+    'calculated_loss': 'Рассчитанные потери (кг)',
+    'diameter': 'Диаметр отверстия (мм)',
+    'distance_from_bottom': 'Расстояние от дна (м)',
+    'fluid_height': 'Уровень жидкости (м)',
+    'viscosity': 'Кинематическая вязкость (м²/с)',
+    'duration_corrosion': 'Время истечения (часы)',
+    'temperature': 'Температура нефти (К)',
+    'density_standard': 'Плотность нефти (кг/м³)',
+    'viscosity_293': 'Вязкость при 293К (м²/с)',
+    'viscosity_323': 'Вязкость при 323К (м²/с)',
+    'duration_evaporation': 'Продолжительность испарения (часы)',
+    'evaporation_rate': 'Скорость ветра (м/с)',
+    'area': 'Площадь испарения (м²)',
+}
+
+def export_csv(request):
+    # Получаем параметр фильтра из GET-запроса
+    calculation_type = request.GET.get('calculation_type', '')
+
+    # Фильтрация данных
+    if calculation_type == 'fuel_loss':
+        data = list(FuelLossCalculation.objects.all().values())
+        filename = 'fuel_loss_calculations.csv'
+    elif calculation_type == 'corrosion_loss':
+        data = list(CorrosionLossCalculation.objects.all().values())
+        filename = 'corrosion_loss_calculations.csv'
+    elif calculation_type == 'oil_evaporation_loss':
+        data = list(OilEvaporationLossCalculation.objects.all().values())
+        filename = 'oil_evaporation_loss_calculations.csv'
+    else:
+        # Если фильтр не выбран, экспортируем все данные
+        fuel_data = list(FuelLossCalculation.objects.all().values())
+        corrosion_data = list(CorrosionLossCalculation.objects.all().values())
+        oil_data = list(OilEvaporationLossCalculation.objects.all().values())
+        data = fuel_data + corrosion_data + oil_data
+        filename = 'all_calculations.csv'
+
+    # Преобразуем даты в формат YYYY-MM-DD и переименовываем ключи
+    for item in data:
+        if 'date' in item:
+            item['date'] = item['date'].strftime('%Y-%m-%d')  # Преобразуем дату
+        # Переименовываем ключи на русский язык
+        for key in list(item.keys()):
+            if key in COLUMN_NAMES_RU:
+                item[COLUMN_NAMES_RU[key]] = item.pop(key)
+
+    # Создаем DataFrame
+    df = pd.DataFrame(data)
+
+    # Создаем HTTP-ответ с файлом CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    df.to_csv(path_or_buf=response, index=False)
+    return response
+
+def export_excel(request):
+    # Получаем параметр фильтра из GET-запроса
+    calculation_type = request.GET.get('calculation_type', '')
+
+    # Фильтрация данных
+    if calculation_type == 'fuel_loss':
+        data = list(FuelLossCalculation.objects.all().values())
+        filename = 'fuel_loss_calculations.xlsx'
+    elif calculation_type == 'corrosion_loss':
+        data = list(CorrosionLossCalculation.objects.all().values())
+        filename = 'corrosion_loss_calculations.xlsx'
+    elif calculation_type == 'oil_evaporation_loss':
+        data = list(OilEvaporationLossCalculation.objects.all().values())
+        filename = 'oil_evaporation_loss_calculations.xlsx'
+    else:
+        # Если фильтр не выбран, экспортируем все данные
+        fuel_data = list(FuelLossCalculation.objects.all().values())
+        corrosion_data = list(CorrosionLossCalculation.objects.all().values())
+        oil_data = list(OilEvaporationLossCalculation.objects.all().values())
+        data = fuel_data + corrosion_data + oil_data
+        filename = 'all_calculations.xlsx'
+
+    # Преобразуем даты в формат YYYY-MM-DD и переименовываем ключи
+    for item in data:
+        if 'date' in item:
+            item['date'] = item['date'].strftime('%Y-%m-%d')  # Преобразуем дату
+        # Переименовываем ключи на русский язык
+        for key in list(item.keys()):
+            if key in COLUMN_NAMES_RU:
+                item[COLUMN_NAMES_RU[key]] = item.pop(key)
+
+    # Создаем DataFrame
+    df = pd.DataFrame(data)
+
+    # Создаем HTTP-ответ с файлом Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    df.to_excel(response, index=False)
+    return response
 

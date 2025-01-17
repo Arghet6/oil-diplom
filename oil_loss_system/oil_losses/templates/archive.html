@@ -55,6 +55,40 @@
             color: #ffd700; /* Золотистый цвет */
         }
 
+        /* Стили формы */
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #ffd700;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #292929;
+            color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #ffd700;
+            color: #1c1c1c;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #e5c100;
+        }
+
         /* Стили таблицы */
         table {
             width: 90%;
@@ -97,6 +131,18 @@
 
     <h1>Архив расчетов</h1>
 
+    <!-- Форма фильтрации -->
+    <form method="get" action="{% url 'archive' %}">
+        <label for="calculation_type">Фильтр по типу расчета:</label>
+        <select name="calculation_type" id="calculation_type">
+            <option value="">Все</option>
+            <option value="fuel_loss">Потери бензина при наливе</option>
+            <option value="corrosion_loss">Потери через коррозионный свищ</option>
+            <option value="oil_evaporation_loss">Потери нефти от испарения</option>
+        </select>
+        <button type="submit">Применить</button>
+    </form>
+
     <!-- Таблица данных -->
     <table>
         <tr>
@@ -129,5 +175,29 @@
         </tr>
         {% endfor %}
     </table>
+
+<!-- Форма экспорта -->
+<div style="text-align: center; margin: 20px;">
+    <a href="{% url 'export_csv' %}?calculation_type={{ selected_calculation_type }}" class="export-button">Экспорт в CSV</a>
+    <a href="{% url 'export_excel' %}?calculation_type={{ selected_calculation_type }}" class="export-button">Экспорт в Excel</a>
+</div>
+
+<style>
+    .export-button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 0 10px;
+        background-color: #ffd700;
+        color: #1c1c1c;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .export-button:hover {
+        background-color: #e5c100;
+    }
+</style>
 </body>
 </html>
