@@ -28,6 +28,7 @@ class OilLossRecord(models.Model):
         verbose_name_plural = "Записи о потерях нефти"
         ordering = ['-date']
 
+# 1
 class FuelLossCalculation(models.Model):
     date = models.DateField(verbose_name="Дата расчета", auto_now_add=True)
     volume = models.FloatField(verbose_name="Объём цистерны (м³)")
@@ -46,6 +47,7 @@ class FuelLossCalculation(models.Model):
         verbose_name = "Расчет потерь бензина при наливе"
         verbose_name_plural = "Расчеты потерь бензина при наливе"
 
+# 2
 class CorrosionLossCalculation(models.Model):
     date = models.DateField(verbose_name="Дата расчета", auto_now_add=True)
     diameter = models.FloatField(verbose_name="Диаметр отверстия (мм)")
@@ -63,6 +65,7 @@ class CorrosionLossCalculation(models.Model):
         verbose_name_plural = "Расчеты потерь через коррозионный свищ"
 
 
+# 3
 class OilEvaporationLossCalculation(models.Model):
     date = models.DateField(verbose_name="Дата расчета", auto_now_add=True)
     temperature = models.FloatField(verbose_name="Температура нефти (К)")

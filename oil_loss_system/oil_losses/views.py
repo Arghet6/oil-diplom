@@ -55,7 +55,7 @@ def edit_record(request, pk):
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'index.html')
+        return render(request, 'calculations.html')
     return render(request, 'welcome.html')  # Показывает "Здарова..." для гостей
 
 def register(request):
@@ -147,7 +147,7 @@ def oil_evaporation_loss_calculation(request):
             duration_evaporation=data['duration_evaporation'],
             evaporation_rate=data['evaporation_rate'],
             area=data['area'],
-            calculated_loss=0.0,  # Здесь не выполняем расчет, сохраняем 0.0
+            calculated_loss=data['calculated_loss'],  # Здесь не выполняем расчет, сохраняем 0.0
         )
 
         # Сохраняем в базу данных

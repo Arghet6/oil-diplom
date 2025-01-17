@@ -176,7 +176,7 @@
         calculated_loss: fuelLoss.toFixed(3),
     };
 
-    fetch('/corrosion_loss_calculation/', {
+    fetch('/calculate_fuel_loss/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -368,10 +368,10 @@ function calculateOilEvaporationLoss() {
         duration_evaporation: duration_evaporation,
         evaporation_rate: evaporationRate,
         area: area,
-        calculated_loss: oilLoss.toFixed(1),
+        calculated_loss: oilLoss.toFixed(1), // Добавляем рассчитанные потери
     };
 
-    fetch('/oil_evaporation_loss_calculation/', {
+    fetch('/oil_evaporation_loss_calculation/', { // Убедитесь, что URL правильный
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
