@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+from .views import calculate_fuel_loss
+from .views import corrosion_loss_calculation
+from .views import oil_evaporation_loss_calculation
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -11,4 +14,8 @@ urlpatterns = [
     path('calculations/', views.calculations, name='calculations'),
     path('archive/', views.archive, name='archive'),
     path('logout/', views.logout_view, name='logout'),  # Путь для выхода
+    path('calculate_fuel_loss/', calculate_fuel_loss, name='calculate_fuel_loss'),
+    path('corrosion_loss_calculation/', corrosion_loss_calculation, name='corrosion_loss_calculation'),
+    path('oil_evaporation_loss_calculation/', oil_evaporation_loss_calculation, name='oil_evaporation_loss_calculation'),
 ]
+

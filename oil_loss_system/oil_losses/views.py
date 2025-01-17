@@ -7,8 +7,11 @@ from .forms import UserRegisterForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from .forms import FuelLossForm, CorrosionLossForm, OilEvaporationLossForm
-from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
-
+import json
+from django.http import JsonResponse
+from .models import FuelLossCalculation
+from .models import CorrosionLossCalculation
+from .models import OilEvaporationLossCalculation
 
 def index(request):
     oil_type = request.GET.get('oil_type')
@@ -81,42 +84,74 @@ def archive(request):
 def logout_view(request):
     logout(request)  # Выход пользователя
     return redirect('login')  # Перенаправление на страницу входа
-
-def fuel_loss_calculation(request):
+# 1
+def calculate_fuel_loss(request):
     if request.method == 'POST':
-        form = FuelLossForm(request.POST)
-        if form.is_valid():
-            # Сохраняем данные в базу данных
-            calculation = form.save(commit=False)
-            # Выполняем расчет (например, используя вашу функцию calculateFuelLoss)
-            calculation.calculated_loss = ...  # Ваш расчет
-            calculation.save()
-            return redirect('success_page')  # Перенаправляем на страницу успеха
-    else:
-        form = FuelLossForm()
-    return render(request, 'fuel_loss_form.html', {'form': form})
+        data = json.loads(request.body)
 
+        # Создаем новый расчет
+        calculation = FuelLossCalculation(
+            volume=data['volume'],
+            fill_time=data['fill_time'],
+            vapor_pressure=data['vapor_pressure'],
+            vapor_temp=data['vapor_temp'],
+            initial_boiling_temp=data['initial_boiling_temp'],
+            flow_rate=data['flow_rate'],
+            pressure=data['pressure'],
+            calculated_loss=data['calculated_loss'],
+        )
+
+        # Сохраняем в базу данных
+        calculation.save()
+
+        # Ответ с подтверждением
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+# 2
 def corrosion_loss_calculation(request):
     if request.method == 'POST':
-        form = CorrosionLossForm(request.POST)
-        if form.is_valid():
-            calculation = form.save(commit=False)
-            calculation.calculated_loss = ...  # Ваш расчет
-            calculation.save()
-            return redirect('success_page')
-    else:
-        form = CorrosionLossForm()
-    return render(request, 'corrosion_loss_form.html', {'form': form})
+        data = json.loads(request.body)
+
+        # Сохраняем данные в модели
+        calculation = CorrosionLossCalculation(
+            diameter=data['diameter'],
+            distance_from_bottom=data['distance_from_bottom'],
+            fluid_height=data['fluid_height'],
+            viscosity=data['viscosity'],
+            duration_corrosion=data['duration_corrosion'],
+            calculated_loss=data['calculated_loss'],  # сохраняем рассчитанный объем потерь
+        )
+        calculation.save()
+
+        # Отправляем ответ об успешном сохранении данных
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
+# 3
 
 def oil_evaporation_loss_calculation(request):
     if request.method == 'POST':
-        form = OilEvaporationLossForm(request.POST)
-        if form.is_valid():
-            calculation = form.save(commit=False)
-            calculation.calculated_loss = ...  # Ваш расчет
-            calculation.save()
-            return redirect('success_page')
-    else:
-        form = OilEvaporationLossForm()
-    return render(request, 'oil_evaporation_form.html', {'form': form})
+        data = json.loads(request.body)
+
+        # Создаем новый расчет, но без выполнения расчетов
+        calculation = OilEvaporationLossCalculation(
+            temperature=data['temperature'],
+            density_standard=data['density_standard'],
+            viscosity_293=data['viscosity_293'],
+            viscosity_323=data['viscosity_323'],
+            duration_evaporation=data['duration_evaporation'],
+            evaporation_rate=data['evaporation_rate'],
+            area=data['area'],
+            calculated_loss=0.0,  # Здесь не выполняем расчет, сохраняем 0.0
+        )
+
+        # Сохраняем в базу данных
+        calculation.save()
+
+        # Ответ с подтверждением
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Invalid method'})
+
 

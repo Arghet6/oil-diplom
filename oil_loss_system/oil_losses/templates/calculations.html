@@ -113,7 +113,8 @@
         <!--1-->
 <div id="calc1" class="calculation-block">
     <h2>Потери автомобильного бензина при различных способах налива</h2>
-    <form id="fuelLossForm" style="display: flex; flex-direction: column; gap: 10px;">
+    <form id="fuelLossForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
+        {% csrf_token %}
         <label for="volume">Объём цистерны (м³):</label>
         <input type="number" id="volume" value="8.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
@@ -143,96 +144,164 @@
 
 <script>
     function calculateFuelLoss() {
-        const volume = parseFloat(document.getElementById('volume').value);
-        const fillTime = parseFloat(document.getElementById('fillTime').value);
-        const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
-        const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
-        const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
-        const flowRate = parseFloat(document.getElementById('flowRate').value);
-        const pressure = parseFloat(document.getElementById('pressure').value);
+    const volume = parseFloat(document.getElementById('volume').value);
+    const fillTime = parseFloat(document.getElementById('fillTime').value);
+    const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
+    const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
+    const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
+    const flowRate = parseFloat(document.getElementById('flowRate').value);
+    const pressure = parseFloat(document.getElementById('pressure').value);
 
-        // Плотность паров бензина
-        const vaporDensity = (pressure - 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
+    // Плотность паров бензина
+    const vaporDensity = (pressure - 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
 
-        // Коэффициент k при открытом наливе
-        const k = 0.7 + 0.213 ** (1/3);
+    // Коэффициент k при открытом наливе
+    const k = 0.7 + 0.213 ** (1/3);
 
-        // Потери бензина при открытом наливе
-        const fuelLoss = k * flowRate * (vaporPressure / pressure) * vaporDensity * fillTime;
+    // Потери бензина при открытом наливе
+    const fuelLoss = k * flowRate * (vaporPressure / pressure) * vaporDensity * fillTime;
+
+    // Вывод результата
+    document.getElementById('fuelLossResult').innerText = `Потери бензина: ${fuelLoss.toFixed(3)} кг`;
+
+    // Сохраняем данные на сервере
+    const data = {
+        volume: volume,
+        fill_time: fillTime,
+        vapor_pressure: vaporPressure,
+        vapor_temp: vaporTemp,
+        initial_boiling_temp: initialBoilingTemp,
+        flow_rate: flowRate,
+        pressure: pressure,
+        calculated_loss: fuelLoss.toFixed(3),
+    };
+
+    fetch('/corrosion_loss_calculation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Данные успешно сохранены!');
+        } else {
+            alert('Произошла ошибка при сохранении данных.');
+        }
+    })
+    .catch(error => console.error('Ошибка:', error));
+}
+
+</script>
+
+
+<!--2-->
+<div id="calc2" class="calculation-block">
+    <h2>Потери объема бензина, вытекающего через коррозионный свищ</h2>
+    <form id="corrosionForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
+        {% csrf_token %}
+        <label for="diameter">Диаметр отверстия (мм):</label>
+        <input type="number" id="diameter" value="1" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="distanceFromBottom">Расстояние от дна (м):</label>
+        <input type="number" id="distanceFromBottom" value="1.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="fluidHeight">Уровень жидкости (м):</label>
+        <input type="number" id="fluidHeight" value="7" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="viscosity">Кинематическая вязкость (м²/с):</label>
+        <input type="number" id="viscosity" value="0.00000085" step="0.00000001" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <label for="duration_corrosion">Время истечения (часы):</label>
+        <input type="number" id="duration_corrosion" value="8" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+
+        <button type="button" id="calculateBtn">Рассчитать</button>
+    </form>
+
+    <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
+
+</div>
+
+<script>
+    document.getElementById('calculateBtn').addEventListener('click', calculateOilLoss);
+
+    function calculateOilLoss() {
+        console.log('Кнопка нажата'); // Проверка, выполняется ли функция
+        const diameter = parseFloat(document.getElementById('diameter').value) / 1000; // мм в метры
+        const distanceFromBottom = parseFloat(document.getElementById('distanceFromBottom').value);
+        const fluidHeight = parseFloat(document.getElementById('fluidHeight').value);
+        const viscosity = parseFloat(document.getElementById('viscosity').value);
+        const duration_corrosion = parseFloat(document.getElementById('duration_corrosion').value);
+
+        // Напор
+        const deltaH = fluidHeight - distanceFromBottom;
+
+        // Площадь сечения отверстия
+        const area = 0.25 * Math.PI * Math.pow(diameter, 2);
+
+        // Периметр отверстия
+        const perimeter = Math.PI * diameter;
+
+        // Характерный линейный размер
+        const L = (4 * area) / perimeter;
+
+        // Число Рейнольдса
+        const re = (diameter * Math.sqrt(2 * 9.81 * deltaH)) / viscosity;
+
+        // Коэффициент расхода
+        const mu = 0.592 + deltaH / Math.pow(re, 0.5);
+
+        // Расход бензина через отверстие (м³/ч)
+        const flowRate = mu * area * Math.sqrt(2 * 9.81 * deltaH);
+
+        // Объем потерь за заданный период (м³)
+        const volumeLoss = flowRate * duration_corrosion;
 
         // Вывод результата
-        document.getElementById('fuelLossResult').innerText = `Потери бензина: ${fuelLoss.toFixed(3)} кг`;
+        document.getElementById('result').innerText = `Объем потерь: ${volumeLoss.toFixed(3)} м³`;
+
+        // Сохраняем данные на сервере
+        const data = {
+            diameter: diameter * 1000,  // Переводим в мм
+            distance_from_bottom: distanceFromBottom,
+            fluid_height: fluidHeight,
+            viscosity: viscosity,
+            duration_corrosion: duration_corrosion,
+            calculated_loss: volumeLoss.toFixed(3),
+        };
+
+        fetch('/corrosion_loss_calculation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Данные успешно сохранены!');
+            } else {
+                alert('Произошла ошибка при сохранении данных.');
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
     }
 </script>
 
 
-        <!--2-->
-        <div id="calc2" class="calculation-block">
-            <h2>Потери объема бензина, вытекающего через коррозионный свищ</h2>
-            <form id="corrosionForm" style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="diameter">Диаметр отверстия (мм):</label>
-                <input type="number" id="diameter" value="1" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
-                <label for="distanceFromBottom">Расстояние от дна (м):</label>
-                <input type="number" id="distanceFromBottom" value="1.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
-                <label for="fluidHeight">Уровень жидкости (м):</label>
-                <input type="number" id="fluidHeight" value="7" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
-                <label for="viscosity">Кинематическая вязкость (м²/с):</label>
-                <input type="number" id="viscosity" value="0.00000085" step="0.00000001" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
-                <label for="duration">Время истечения (часы):</label>
-                <input type="number" id="duration" value="8" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
-                <button type="button" onclick="calculateOilLoss()">Рассчитать</button>
-            </form>
-
-            <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
-        </div>
 
 
 
-    <script>
-        function calculateOilLoss() {
-            const diameter = parseFloat(document.getElementById('diameter').value) / 1000; // мм в метры
-            const distanceFromBottom = parseFloat(document.getElementById('distanceFromBottom').value);
-            const fluidHeight = parseFloat(document.getElementById('fluidHeight').value);
-            const viscosity = parseFloat(document.getElementById('viscosity').value);
-            const duration = parseFloat(document.getElementById('duration').value);
-
-            // Напор
-            const deltaH = fluidHeight - distanceFromBottom;
-
-            // Площадь сечения отверстия
-            const area = 0.25 * Math.PI * Math.pow(diameter, 2);
-
-            // Периметр отверстия
-            const perimeter = Math.PI * diameter;
-
-            // Характерный линейный размер
-            const L = (4 * area) / perimeter;
-
-            // Число Рейнольдса
-            const re = (diameter * Math.sqrt(2 * 9.81 * deltaH)) / viscosity;
-
-            // Коэффициент расхода
-            const mu = 0.592 + deltaH / Math.pow(re, 0.5);
-
-            // Расход бензина через отверстие (м³/ч)
-            const flowRate = mu * area * Math.sqrt(2 * 9.81 * deltaH);
-
-            // Объем потерь за заданный период (м³)
-            const volumeLoss = flowRate * duration;
-
-            // Вывод результата
-            document.getElementById('result').innerText = `Объем потерь: ${volumeLoss.toFixed(3)} м³`;
-        }
-    </script>
-        <!--3-->
+<!--3-->
 <div id="calc3" class="calculation-block">
     <h2>Потери нефти от испарения с поверхности воды</h2>
-    <form id="oilEvaporationForm" style="display: flex; flex-direction: column; gap: 10px;">
+    <form id="oilEvaporationForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
+        {% csrf_token %}
         <label for="temperature">Температура нефти (К):</label>
         <input type="number" id="temperature" value="19" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
@@ -245,8 +314,8 @@
         <label for="viscosity323">Кинематическая вязкость нефти при 323К (м²/с):</label>
         <input type="number" id="viscosity323" value="0.55e-4" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
-        <label for="duration">Продолжительность испарения (часы):</label>
-        <input type="number" id="duration" value="20" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <label for="duration_evaporation">Продолжительность испарения (часы):</label>
+        <input type="number" id="duration_evaporation" value="20" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="evaporationRate">Скорость ветра (м/с):</label>
         <input type="number" id="evaporationRate" value="0.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
@@ -266,7 +335,7 @@ function calculateOilEvaporationLoss() {
     const densityStandard = parseFloat(document.getElementById('densityStandard').value);
     const viscosity293 = parseFloat(document.getElementById('viscosity293').value);
     const viscosity323 = parseFloat(document.getElementById('viscosity323').value);
-    const duration = parseFloat(document.getElementById('duration').value);
+    const duration_evaporation = parseFloat(document.getElementById('duration_evaporation').value);
     const evaporationRate = parseFloat(document.getElementById('evaporationRate').value);
     const area = parseFloat(document.getElementById('area').value);
 
@@ -282,18 +351,45 @@ function calculateOilEvaporationLoss() {
     const Phi = Math.pow((69.2e-3 * mu323 - 45.8e-3) / (69.2e-3 * mu293 - 45.8e-3), 0.67);
 
     // Коэффициент испарения
-    const sigmaN = (Phi * duration) / (5170 * (2 - Math.pow(0.5, 0.38) * Math.pow(19, -1.75) + duration));
+    const sigmaN = (Phi * duration_evaporation) / (5170 * (2 - Math.pow(0.5, 0.38) * Math.pow(19, -1.75) + duration_evaporation));
 
     // Потери нефти от испарения (в кг)
     const oilLoss = sigmaN * area * density323;
 
     // Вывод результата
     document.getElementById('oilEvaporationResult').innerText = `Потери нефти: ${oilLoss.toFixed(1)} кг`;
+
+    // Сохраняем данные на сервере
+    const data = {
+        temperature: temperature,
+        density_standard: densityStandard,
+        viscosity_293: viscosity293,
+        viscosity_323: viscosity323,
+        duration_evaporation: duration_evaporation,
+        evaporation_rate: evaporationRate,
+        area: area,
+        calculated_loss: oilLoss.toFixed(1),
+    };
+
+    fetch('/oil_evaporation_loss_calculation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Данные успешно сохранены!');
+        } else {
+            alert('Произошла ошибка при сохранении данных.');
+        }
+    })
+    .catch(error => console.error('Ошибка:', error));
 }
-
 </script>
-
-
 
     </div>
 </body>

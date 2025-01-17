@@ -46,13 +46,15 @@ class FuelLossCalculation(models.Model):
         verbose_name = "Расчет потерь бензина при наливе"
         verbose_name_plural = "Расчеты потерь бензина при наливе"
 
+from django.db import models
+
 class CorrosionLossCalculation(models.Model):
     date = models.DateField(verbose_name="Дата расчета", auto_now_add=True)
     diameter = models.FloatField(verbose_name="Диаметр отверстия (мм)")
     distance_from_bottom = models.FloatField(verbose_name="Расстояние от дна (м)")
     fluid_height = models.FloatField(verbose_name="Уровень жидкости (м)")
     viscosity = models.FloatField(verbose_name="Кинематическая вязкость (м²/с)")
-    duration = models.FloatField(verbose_name="Время истечения (часы)")
+    duration_corrosion = models.FloatField(verbose_name="Время истечения (часы)")
     calculated_loss = models.FloatField(verbose_name="Рассчитанные потери (м³)", blank=True, null=True)
 
     def __str__(self):
@@ -62,13 +64,14 @@ class CorrosionLossCalculation(models.Model):
         verbose_name = "Расчет потерь через коррозионный свищ"
         verbose_name_plural = "Расчеты потерь через коррозионный свищ"
 
+
 class OilEvaporationLossCalculation(models.Model):
     date = models.DateField(verbose_name="Дата расчета", auto_now_add=True)
     temperature = models.FloatField(verbose_name="Температура нефти (К)")
     density_standard = models.FloatField(verbose_name="Плотность нефти при стандартных условиях (кг/м³)")
     viscosity_293 = models.FloatField(verbose_name="Кинематическая вязкость нефти при 293К (м²/с)")
     viscosity_323 = models.FloatField(verbose_name="Кинематическая вязкость нефти при 323К (м²/с)")
-    duration = models.FloatField(verbose_name="Продолжительность испарения (часы)")
+    duration_evaporation = models.FloatField(verbose_name="Продолжительность испарения (часы)")
     evaporation_rate = models.FloatField(verbose_name="Скорость ветра (м/с)")
     area = models.FloatField(verbose_name="Площадь испарения (м²)")
     calculated_loss = models.FloatField(verbose_name="Рассчитанные потери (кг)", blank=True, null=True)
