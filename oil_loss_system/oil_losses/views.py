@@ -89,7 +89,7 @@ def calculate_fuel_loss(request):
     if request.method == 'POST':
         data = json.loads(request.body)
 
-        # Создаем новый расчет
+        # Создаем новый расчет потерь топлива
         calculation = FuelLossCalculation(
             volume=data['volume'],
             fill_time=data['fill_time'],
@@ -108,26 +108,30 @@ def calculate_fuel_loss(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
+
 # 2
 def corrosion_loss_calculation(request):
     if request.method == 'POST':
         data = json.loads(request.body)
 
-        # Сохраняем данные в модели
+        # Для расчета потерь через коррозионный свищ создаем новый расчет
         calculation = CorrosionLossCalculation(
-            diameter=data['diameter'],
-            distance_from_bottom=data['distance_from_bottom'],
-            fluid_height=data['fluid_height'],
-            viscosity=data['viscosity'],
-            duration_corrosion=data['duration_corrosion'],
-            calculated_loss=data['calculated_loss'],  # сохраняем рассчитанный объем потерь
+            diameter=data.get('diameter'),  # Диаметр отверстия
+            distance_from_bottom=data.get('distance_from_bottom'),  # Расстояние от дна
+            fluid_height=data.get('fluid_height'),  # Уровень жидкости
+            viscosity=data.get('viscosity'),  # Вязкость
+            duration_corrosion=data.get('duration_corrosion'),  # Время истечения
+            calculated_loss=data.get('calculated_loss'),  # Рассчитанные потери
         )
+
+        # Сохраняем в базу данных
         calculation.save()
 
-        # Отправляем ответ об успешном сохранении данных
+        # Ответ с подтверждением
         return JsonResponse({'success': True})
-
     return JsonResponse({'success': False})
+
+
 # 3
 
 def oil_evaporation_loss_calculation(request):

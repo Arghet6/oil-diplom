@@ -46,8 +46,6 @@ class FuelLossCalculation(models.Model):
         verbose_name = "Расчет потерь бензина при наливе"
         verbose_name_plural = "Расчеты потерь бензина при наливе"
 
-from django.db import models
-
 class CorrosionLossCalculation(models.Model):
     date = models.DateField(verbose_name="Дата расчета", auto_now_add=True)
     diameter = models.FloatField(verbose_name="Диаметр отверстия (мм)")
