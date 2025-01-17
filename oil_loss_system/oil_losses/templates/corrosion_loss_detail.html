@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали расчета потерь через коррозионный свищ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            color: #ffd700;
+        }
+        .detail {
+            background-color: #292929;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .detail p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Детали расчета потерь через коррозионный свищ</h1>
+    <div class="detail">
+        <p><strong>Дата:</strong> {{ record.date }}</p>
+        <p><strong>Диаметр отверстия (мм):</strong> {{ record.diameter }}</p>
+        <p><strong>Расстояние от дна (м):</strong> {{ record.distance_from_bottom }}</p>
+        <p><strong>Уровень жидкости (м):</strong> {{ record.fluid_height }}</p>
+        <p><strong>Кинематическая вязкость (м²/с):</strong> {{ record.viscosity }}</p>
+        <p><strong>Время истечения (часы):</strong> {{ record.duration_corrosion }}</p>
+        <p><strong>Рассчитанные потери (м³):</strong> {{ record.calculated_loss }}</p>
+    </div>
+    <a href="/archive/">Вернуться к архиву</a>
+</body>
+</html>

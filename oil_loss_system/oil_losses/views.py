@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from .models import FuelLossCalculation
 from .models import CorrosionLossCalculation
 from .models import OilEvaporationLossCalculation
+from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
 
 def index(request):
     oil_type = request.GET.get('oil_type')
@@ -158,4 +159,31 @@ def oil_evaporation_loss_calculation(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid method'})
 
+# архив
+
+def archive(request):
+    # Получаем все записи из каждой модели
+    fuel_loss_calculations = FuelLossCalculation.objects.all()
+    corrosion_loss_calculations = CorrosionLossCalculation.objects.all()
+    oil_evaporation_loss_calculations = OilEvaporationLossCalculation.objects.all()
+
+    # Передаем данные в шаблон
+    context = {
+        'fuel_loss_calculations': fuel_loss_calculations,
+        'corrosion_loss_calculations': corrosion_loss_calculations,
+        'oil_evaporation_loss_calculations': oil_evaporation_loss_calculations,
+    }
+    return render(request, 'archive.html', context)
+
+def fuel_loss_detail(request, id):
+    record = FuelLossCalculation.objects.get(id=id)
+    return render(request, 'fuel_loss_detail.html', {'record': record})
+
+def corrosion_loss_detail(request, id):
+    record = CorrosionLossCalculation.objects.get(id=id)
+    return render(request, 'corrosion_loss_detail.html', {'record': record})
+
+def oil_evaporation_loss_detail(request, id):
+    record = OilEvaporationLossCalculation.objects.get(id=id)
+    return render(request, 'oil_evaporation_loss_detail.html', {'record': record})
 

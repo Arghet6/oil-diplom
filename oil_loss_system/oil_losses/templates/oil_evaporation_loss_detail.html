@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали расчета потерь нефти от испарения</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            color: #ffd700;
+        }
+        .detail {
+            background-color: #292929;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .detail p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Детали расчета потерь нефти от испарения</h1>
+    <div class="detail">
+        <p><strong>Дата:</strong> {{ record.date }}</p>
+        <p><strong>Температура нефти (К):</strong> {{ record.temperature }}</p>
+        <p><strong>Плотность нефти (кг/м³):</strong> {{ record.density_standard }}</p>
+        <p><strong>Вязкость при 293К (м²/с):</strong> {{ record.viscosity_293 }}</p>
+        <p><strong>Вязкость при 323К (м²/с):</strong> {{ record.viscosity_323 }}</p>
+        <p><strong>Продолжительность испарения (часы):</strong> {{ record.duration_evaporation }}</p>
+        <p><strong>Скорость ветра (м/с):</strong> {{ record.evaporation_rate }}</p>
+        <p><strong>Площадь испарения (м²):</strong> {{ record.area }}</p>
+        <p><strong>Рассчитанные потери (кг):</strong> {{ record.calculated_loss }}</p>
+    </div>
+    <a href="/archive/">Вернуться к архиву</a>
+</body>
+</html>

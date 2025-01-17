@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали расчета потерь бензина при наливе</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            color: #ffd700;
+        }
+        .detail {
+            background-color: #292929;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .detail p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Детали расчета потерь бензина при наливе</h1>
+    <div class="detail">
+        <p><strong>Дата:</strong> {{ record.date }}</p>
+        <p><strong>Объём цистерны (м³):</strong> {{ record.volume }}</p>
+        <p><strong>Время налива (часы):</strong> {{ record.fill_time }}</p>
+        <p><strong>Давление паров (Па):</strong> {{ record.vapor_pressure }}</p>
+        <p><strong>Температура бензина (К):</strong> {{ record.vapor_temp }}</p>
+        <p><strong>Температура кипения (К):</strong> {{ record.initial_boiling_temp }}</p>
+        <p><strong>Расход налива (м³/ч):</strong> {{ record.flow_rate }}</p>
+        <p><strong>Атмосферное давление (Па):</strong> {{ record.pressure }}</p>
+        <p><strong>Рассчитанные потери (кг):</strong> {{ record.calculated_loss }}</p>
+    </div>
+    <a href="/archive/">Вернуться к архиву</a>
+</body>
+</html>

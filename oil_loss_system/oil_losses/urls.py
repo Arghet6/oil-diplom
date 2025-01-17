@@ -17,5 +17,9 @@ urlpatterns = [
     path('calculate_fuel_loss/', calculate_fuel_loss, name='calculate_fuel_loss'),
     path('corrosion_loss_calculation/', corrosion_loss_calculation, name='corrosion_loss_calculation'),
     path('oil_evaporation_loss_calculation/', oil_evaporation_loss_calculation, name='oil_evaporation_loss_calculation'),
+    path('archive/', views.archive, name='archive'),
+    path('fuel_loss_detail/<int:id>/', views.fuel_loss_detail, name='fuel_loss_detail'),
+    path('corrosion_loss_detail/<int:id>/', views.corrosion_loss_detail, name='corrosion_loss_detail'),
+    path('oil_evaporation_loss_detail/<int:id>/', views.oil_evaporation_loss_detail, name='oil_evaporation_loss_detail'),
 ]
 
