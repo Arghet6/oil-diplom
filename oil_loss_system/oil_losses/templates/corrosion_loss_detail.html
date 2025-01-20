@@ -23,6 +23,39 @@
         .detail p {
             margin: 10px 0;
         }
+        .export-buttons {
+            display: flex;
+            justify-content: flex-end; /* Выравнивание кнопок экспорта справа */
+            margin-top: 20px;
+        }
+        .export-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #ffd700;
+            color: #1c1c1c;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .export-button:hover {
+            background-color: #e5c100;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #007bff; /* Синий цвет */
+            color: #ffffff; /* Белый текст */
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #0056b3; /* Темно-синий при наведении */
+        }
     </style>
 </head>
 <body>
@@ -36,6 +69,14 @@
         <p><strong>Время истечения (часы):</strong> {{ record.duration_corrosion }}</p>
         <p><strong>Рассчитанные потери (м³):</strong> {{ record.calculated_loss }}</p>
     </div>
-    <a href="/archive/">Вернуться к архиву</a>
+
+    <!-- Кнопки экспорта -->
+    <div class="export-buttons">
+        <a href="{% url 'export_csv' %}?calculation_type=corrosion_loss&record_id={{ record.id }}" class="export-button">Экспорт в CSV</a>
+        <a href="{% url 'export_excel' %}?calculation_type=corrosion_loss&record_id={{ record.id }}" class="export-button">Экспорт в Excel</a>
+    </div>
+
+    <!-- Кнопка "Вернуться к архиву" -->
+    <a href="/archive/" class="back-button">Вернуться к архиву</a>
 </body>
 </html>

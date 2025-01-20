@@ -1,11 +1,5 @@
 from django.contrib import admin
-from .models import OilLossRecord, FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
-
-@admin.register(OilLossRecord)
-class OilLossRecordAdmin(admin.ModelAdmin):
-    list_display = ('date', 'location', 'oil_type', 'estimated_loss', 'actual_loss', 'loss_difference')
-    search_fields = ('location', 'oil_type')
-    list_filter = ('date', 'oil_type')
+from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation, TankerTruck, DensityData
 
 @admin.register(FuelLossCalculation)
 class FuelLossCalculationAdmin(admin.ModelAdmin):
@@ -24,3 +18,17 @@ class OilEvaporationLossCalculationAdmin(admin.ModelAdmin):
     list_display = ('date', 'temperature', 'density_standard', 'viscosity_293', 'viscosity_323', 'duration_evaporation', 'evaporation_rate', 'area', 'calculated_loss')
     search_fields = ('date',)
     list_filter = ('date',)
+
+
+
+@admin.register(TankerTruck)
+class TankerTruckAdmin(admin.ModelAdmin):
+    list_display = ('model', 'base_chassis', 'length', 'width', 'height', 'operational_capacity', 'geometric_capacity', 'filling_time_with_pump', 'discharge_time_with_pump', 'discharge_time_by_gravity', 'tank_shape')
+    search_fields = ('model', 'base_chassis')
+    list_filter = ('base_chassis',)
+
+@admin.register(DensityData)
+class DensityDataAdmin(admin.ModelAdmin):
+    list_display = ('density_range_1', 'temp_correction_1', 'expansion_coefficient_1', 'density_range_2', 'temp_correction_2', 'expansion_coefficient_2')
+    search_fields = ('density_range_1', 'density_range_2')
+    list_filter = ('density_range_1', 'density_range_2')

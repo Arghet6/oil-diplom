@@ -83,3 +83,39 @@ class OilEvaporationLossCalculation(models.Model):
     class Meta:
         verbose_name = "Расчет потерь нефти от испарения"
         verbose_name_plural = "Расчеты потерь нефти от испарения"
+
+class TankerTruck(models.Model):
+    model = models.CharField(max_length=50, verbose_name="Модель")
+    base_chassis = models.CharField(max_length=50, verbose_name="Базовое шасси")
+    length = models.IntegerField(verbose_name="Длина")
+    width = models.IntegerField(verbose_name="Ширина")
+    height = models.IntegerField(verbose_name="Высота")
+    operational_capacity = models.FloatField(verbose_name="Эксплуатационная вместимость")
+    geometric_capacity = models.FloatField(verbose_name="Геометрическая вместимость")
+    filling_time_with_pump = models.IntegerField(verbose_name="Время заполнения с насосом")
+    discharge_time_with_pump = models.IntegerField(verbose_name="Время слива с насосом", null=True, blank=True)
+    discharge_time_by_gravity = models.IntegerField(verbose_name="Время слива самотоком", null=True, blank=True)
+    tank_shape = models.CharField(max_length=50, verbose_name="Форма цистерны", null=True, blank=True)
+
+    def __str__(self):
+        return self.model
+
+    class Meta:
+        verbose_name = "Автомобиль-цистерна"
+        verbose_name_plural = "Автомобили-цистерны"
+
+
+class DensityData(models.Model):
+    density_range_1 = models.CharField(max_length=50, verbose_name="Плотность 1 (кг/м³)")
+    temp_correction_1 = models.FloatField(verbose_name="Температурная поправка 1 (кг/(м³·К))")
+    expansion_coefficient_1 = models.FloatField(verbose_name="Коэффициент объемного расширения 1 (1/K)")
+    density_range_2 = models.CharField(max_length=50, verbose_name="Плотность 2 (кг/м³)")
+    temp_correction_2 = models.FloatField(verbose_name="Температурная поправка 2 (кг/(м³·К))")
+    expansion_coefficient_2 = models.FloatField(verbose_name="Коэффициент объемного расширения 2 (1/K)")
+
+    def __str__(self):
+        return f"{self.density_range_1} - {self.density_range_2}"
+
+    class Meta:
+        verbose_name = "Данные плотности"
+        verbose_name_plural = "Данные плотности"
