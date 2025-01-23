@@ -230,6 +230,8 @@
 
     function calculateOilLoss() {
         console.log('Кнопка нажата'); // Проверка, выполняется ли функция
+
+        // Получаем значения из формы
         const diameter = parseFloat(document.getElementById('diameter').value) / 1000; // мм в метры
         const distanceFromBottom = parseFloat(document.getElementById('distanceFromBottom').value);
         const fluidHeight = parseFloat(document.getElementById('fluidHeight').value);
@@ -238,29 +240,41 @@
 
         // Напор
         const deltaH = fluidHeight - distanceFromBottom;
+        console.log('Напор (deltaH):', deltaH);
 
         // Площадь сечения отверстия
         const area = 0.25 * Math.PI * Math.pow(diameter, 2);
+        console.log('Площадь сечения (area):', area);
 
         // Периметр отверстия
         const perimeter = Math.PI * diameter;
+        console.log('Периметр отверстия (perimeter):', perimeter);
 
         // Характерный линейный размер
         const L = (4 * area) / perimeter;
+        console.log('Характерный линейный размер (L):', L);
 
         // Число Рейнольдса
         const re = (diameter * Math.sqrt(2 * 9.81 * deltaH)) / viscosity;
+        console.log('Число Рейнольдса (re):', re);
 
         // Коэффициент расхода
         const mu = 0.592 + deltaH / Math.pow(re, 0.5);
+        console.log('Коэффициент расхода (mu):', mu);
 
-        // Расход бензина через отверстие (м³/ч)
+        // Расход бензина через отверстие (м³/с)
         const flowRate = mu * area * Math.sqrt(2 * 9.81 * deltaH);
+        console.log('Расход бензина (flowRate, м³/с):', flowRate);
+
+        // Переводим расход в м³/ч
+        const flowRatePerHour = flowRate * 3600;
+        console.log('Расход бензина (flowRate, м³/ч):', flowRatePerHour);
 
         // Объем потерь за заданный период (м³)
-        const volumeLoss = flowRate * duration_corrosion;
+        const volumeLoss = flowRatePerHour * duration_corrosion;
+        console.log('Объем потерь (volumeLoss, м³):', volumeLoss);
 
-        // Вывод результата
+        // Вывод результата на страницу
         document.getElementById('result').innerText = `Объем потерь: ${volumeLoss.toFixed(3)} м³`;
 
         // Сохраняем данные на сервере
