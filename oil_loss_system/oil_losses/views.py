@@ -230,18 +230,28 @@ COLUMN_NAMES_RU = {
 }
 
 def export_csv(request):
-    # Получаем параметр фильтра из GET-запроса
+    # Получаем параметры из GET-запроса
     calculation_type = request.GET.get('calculation_type', '')
+    record_id = request.GET.get('record_id', None)
 
     # Фильтрация данных
     if calculation_type == 'fuel_loss':
-        data = list(FuelLossCalculation.objects.all().values())
+        if record_id:
+            data = list(FuelLossCalculation.objects.filter(id=record_id).values())
+        else:
+            data = list(FuelLossCalculation.objects.all().values())
         filename = 'fuel_loss_calculations.csv'
     elif calculation_type == 'corrosion_loss':
-        data = list(CorrosionLossCalculation.objects.all().values())
+        if record_id:
+            data = list(CorrosionLossCalculation.objects.filter(id=record_id).values())
+        else:
+            data = list(CorrosionLossCalculation.objects.all().values())
         filename = 'corrosion_loss_calculations.csv'
     elif calculation_type == 'oil_evaporation_loss':
-        data = list(OilEvaporationLossCalculation.objects.all().values())
+        if record_id:
+            data = list(OilEvaporationLossCalculation.objects.filter(id=record_id).values())
+        else:
+            data = list(OilEvaporationLossCalculation.objects.all().values())
         filename = 'oil_evaporation_loss_calculations.csv'
     else:
         # Если фильтр не выбран, экспортируем все данные
@@ -268,20 +278,29 @@ def export_csv(request):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     df.to_csv(path_or_buf=response, index=False)
     return response
-
 def export_excel(request):
-    # Получаем параметр фильтра из GET-запроса
+    # Получаем параметры из GET-запроса
     calculation_type = request.GET.get('calculation_type', '')
+    record_id = request.GET.get('record_id', None)
 
     # Фильтрация данных
     if calculation_type == 'fuel_loss':
-        data = list(FuelLossCalculation.objects.all().values())
+        if record_id:
+            data = list(FuelLossCalculation.objects.filter(id=record_id).values())
+        else:
+            data = list(FuelLossCalculation.objects.all().values())
         filename = 'fuel_loss_calculations.xlsx'
     elif calculation_type == 'corrosion_loss':
-        data = list(CorrosionLossCalculation.objects.all().values())
+        if record_id:
+            data = list(CorrosionLossCalculation.objects.filter(id=record_id).values())
+        else:
+            data = list(CorrosionLossCalculation.objects.all().values())
         filename = 'corrosion_loss_calculations.xlsx'
     elif calculation_type == 'oil_evaporation_loss':
-        data = list(OilEvaporationLossCalculation.objects.all().values())
+        if record_id:
+            data = list(OilEvaporationLossCalculation.objects.filter(id=record_id).values())
+        else:
+            data = list(OilEvaporationLossCalculation.objects.all().values())
         filename = 'oil_evaporation_loss_calculations.xlsx'
     else:
         # Если фильтр не выбран, экспортируем все данные
