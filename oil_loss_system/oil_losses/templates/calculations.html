@@ -116,85 +116,95 @@
     <form id="fuelLossForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
         {% csrf_token %}
         <label for="volume">Объём цистерны (м³):</label>
-        <input type="number" id="volume" value="8.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="volume" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="fillTime">Время налива цистерны (часы):</label>
-        <input type="number" id="fillTime" value="0.213" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="fillTime" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="vaporPressure">Давление насыщенных паров бензина (Па):</label>
-        <input type="number" id="vaporPressure" value="40000" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="vaporPressure" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="vaporTemp">Температура бензина при наливе (К):</label>
-        <input type="number" id="vaporTemp" value="295" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="vaporTemp" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="initialBoilingTemp">Температура начала кипения (К):</label>
-        <input type="number" id="initialBoilingTemp" value="319" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="initialBoilingTemp" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="flowRate">Расход налива (м³/ч):</label>
-        <input type="number" id="flowRate" value="40" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="flowRate" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="pressure">Атмосферное давление (Па):</label>
-        <input type="number" id="pressure" value="101320" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="pressure" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <button type="button" onclick="calculateFuelLoss()">Рассчитать</button>
+        <button type="button" onclick="fillDemoData()">ДЕМО</button>
     </form>
 
     <p id="fuelLossResult" style="margin-top: 20px; font-weight: bold;"></p>
 </div>
 
 <script>
+    function fillDemoData() {
+        document.getElementById('volume').value = 8.5;
+        document.getElementById('fillTime').value = 0.213;
+        document.getElementById('vaporPressure').value = 40000;
+        document.getElementById('vaporTemp').value = 295;
+        document.getElementById('initialBoilingTemp').value = 319;
+        document.getElementById('flowRate').value = 40;
+        document.getElementById('pressure').value = 101320;
+    }
+
     function calculateFuelLoss() {
-    const volume = parseFloat(document.getElementById('volume').value);
-    const fillTime = parseFloat(document.getElementById('fillTime').value);
-    const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
-    const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
-    const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
-    const flowRate = parseFloat(document.getElementById('flowRate').value);
-    const pressure = parseFloat(document.getElementById('pressure').value);
+        const volume = parseFloat(document.getElementById('volume').value);
+        const fillTime = parseFloat(document.getElementById('fillTime').value);
+        const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
+        const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
+        const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
+        const flowRate = parseFloat(document.getElementById('flowRate').value);
+        const pressure = parseFloat(document.getElementById('pressure').value);
 
-    // Плотность паров бензина
-    const vaporDensity = (pressure - 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
+        // Плотность паров бензина
+        const vaporDensity = (pressure - 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
 
-    // Коэффициент k при открытом наливе
-    const k = 0.7 + 0.213 ** (1/3);
+        // Коэффициент k при открытом наливе
+        const k = 0.7 + 0.213 ** (1/3);
 
-    // Потери бензина при открытом наливе
-    const fuelLoss = k * flowRate * (vaporPressure / pressure) * vaporDensity * fillTime;
+        // Потери бензина при открытом наливе
+        const fuelLoss = k * flowRate * (vaporPressure / pressure) * vaporDensity * fillTime;
 
-    // Вывод результата
-    document.getElementById('fuelLossResult').innerText = `Потери бензина: ${fuelLoss.toFixed(3)} кг`;
+        // Вывод результата
+        document.getElementById('fuelLossResult').innerText = `Потери бензина: ${fuelLoss.toFixed(3)} кг`;
 
-    // Сохраняем данные на сервере
-    const data = {
-        volume: volume,
-        fill_time: fillTime,
-        vapor_pressure: vaporPressure,
-        vapor_temp: vaporTemp,
-        initial_boiling_temp: initialBoilingTemp,
-        flow_rate: flowRate,
-        pressure: pressure,
-        calculated_loss: fuelLoss.toFixed(3),
-    };
+        // Сохраняем данные на сервере
+        const data = {
+            volume: volume,
+            fill_time: fillTime,
+            vapor_pressure: vaporPressure,
+            vapor_temp: vaporTemp,
+            initial_boiling_temp: initialBoilingTemp,
+            flow_rate: flowRate,
+            pressure: pressure,
+            calculated_loss: fuelLoss.toFixed(3),
+        };
 
-    fetch('/calculate_fuel_loss/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Данные успешно сохранены!');
-        } else {
-            alert('Произошла ошибка при сохранении данных.');
-        }
-    })
-    .catch(error => console.error('Ошибка:', error));
-}
-
+        fetch('/calculate_fuel_loss/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Данные успешно сохранены!');
+            } else {
+                alert('Произошла ошибка при сохранении данных.');
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
+    }
 </script>
 
 
@@ -204,28 +214,38 @@
     <form id="corrosionForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
         {% csrf_token %}
         <label for="diameter">Диаметр отверстия (мм):</label>
-        <input type="number" id="diameter" value="1" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="diameter" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="distanceFromBottom">Расстояние от дна (м):</label>
-        <input type="number" id="distanceFromBottom" value="1.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="distanceFromBottom" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="fluidHeight">Уровень жидкости (м):</label>
-        <input type="number" id="fluidHeight" value="7" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="fluidHeight" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="viscosity">Кинематическая вязкость (м²/с):</label>
-        <input type="number" id="viscosity" value="0.00000085" step="0.00000001" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="viscosity" step="0.00000001" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="duration_corrosion">Время истечения (часы):</label>
-        <input type="number" id="duration_corrosion" value="8" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="duration_corrosion" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <button type="button" id="calculateBtn">Рассчитать</button>
+        <button type="button" onclick="fillDemoDataCorrosion()">ДЕМО</button>
     </form>
 
     <p id="result" style="margin-top: 20px; font-weight: bold;"></p>
-
 </div>
 
 <script>
+    // Функция для заполнения полей демо-данными
+    function fillDemoDataCorrosion() {
+        document.getElementById('diameter').value = 1; // Диаметр отверстия (мм)
+        document.getElementById('distanceFromBottom').value = 1.5; // Расстояние от дна (м)
+        document.getElementById('fluidHeight').value = 7; // Уровень жидкости (м)
+        document.getElementById('viscosity').value = 0.00000085; // Кинематическая вязкость (м²/с)
+        document.getElementById('duration_corrosion').value = 8; // Время истечения (часы)
+    }
+
+    // Функция для расчета потерь
     document.getElementById('calculateBtn').addEventListener('click', calculateOilLoss);
 
     function calculateOilLoss() {
@@ -317,33 +337,45 @@
     <form id="oilEvaporationForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
         {% csrf_token %}
         <label for="temperature">Температура нефти (К):</label>
-        <input type="number" id="temperature" value="19" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="temperature" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="densityStandard">Плотность нефти при стандартных условиях (кг/м³):</label>
-        <input type="number" id="densityStandard" value="865" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="densityStandard" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="viscosity293">Кинематическая вязкость нефти при 293К (м²/с):</label>
-        <input type="number" id="viscosity293" value="0.8e-4" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="viscosity293" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="viscosity323">Кинематическая вязкость нефти при 323К (м²/с):</label>
-        <input type="number" id="viscosity323" value="0.55e-4" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="viscosity323" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="duration_evaporation">Продолжительность испарения (часы):</label>
-        <input type="number" id="duration_evaporation" value="20" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="duration_evaporation" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="evaporationRate">Скорость ветра (м/с):</label>
-        <input type="number" id="evaporationRate" value="0.5" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="evaporationRate" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="area">Площадь испарения (м²):</label>
-        <input type="number" id="area" value="878" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="number" id="area" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <button type="button" onclick="calculateOilEvaporationLoss()">Рассчитать</button>
+        <button type="button" onclick="fillDemoDataEvaporation()">ДЕМО</button> <!-- Кнопка ДЕМО -->
     </form>
 
     <p id="oilEvaporationResult" style="margin-top: 20px; font-weight: bold;"></p>
 </div>
 
 <script>
+function fillDemoDataEvaporation() {
+    // Предопределенные значения для демонстрации
+    document.getElementById('temperature').value = 19;
+    document.getElementById('densityStandard').value = 865;
+    document.getElementById('viscosity293').value = 0.8e-4;
+    document.getElementById('viscosity323').value = 0.55e-4;
+    document.getElementById('duration_evaporation').value = 20;
+    document.getElementById('evaporationRate').value = 0.5;
+    document.getElementById('area').value = 878;
+}
+
 function calculateOilEvaporationLoss() {
     const temperature = parseFloat(document.getElementById('temperature').value);
     const densityStandard = parseFloat(document.getElementById('densityStandard').value);
