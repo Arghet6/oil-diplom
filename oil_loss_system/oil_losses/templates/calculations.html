@@ -115,6 +115,20 @@
     <h2>Потери автомобильного бензина при различных способах налива</h2>
     <form id="fuelLossForm" style="display: flex; flex-direction: column; gap: 10px;" method="post">
         {% csrf_token %}
+
+        <!-- Выпадающий список для выбора цистерны -->
+        <label for="tankerName">Выберите цистерну:</label>
+        <select id="tankerName" onchange="updateTankerVolume()" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <option value="">-- Выберите цистерну --</option>
+            <option value="4.0">АЦМ-4-15ТК (4.0 м³)</option>
+            <option value="4.1">АЦ-4-13Г (4.1 м³)</option>
+            <option value="4.4">АЦ-4-3-13Г (4.4 м³)</option>
+            <option value="5.5">АЦ-5,5-4320 (5.5 м³)</option>
+            <option value="8.5">АЦ-8,5-255Б (8.5 м³)</option>
+            <option value="9.5">АЦ-9,5-255Б (9.5 м³)</option>
+            <option value="10.0">АЦ-10-260 (10.0 м³)</option>
+        </select>
+
         <label for="volume">Объём цистерны (м³):</label>
         <input type="number" id="volume" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
@@ -144,6 +158,20 @@
 </div>
 
 <script>
+
+        function updateTankerVolume() {
+        const tankerSelect = document.getElementById('tankerName');
+        const volumeInput = document.getElementById('volume');
+        const selectedVolume = tankerSelect.value;
+
+        if (selectedVolume) {
+            volumeInput.value = selectedVolume;
+        } else {
+            volumeInput.value = '';
+        }
+    }
+
+
     function fillDemoData() {
         document.getElementById('volume').value = 8.5;
         document.getElementById('fillTime').value = 0.213;
