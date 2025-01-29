@@ -38,7 +38,9 @@ class FuelLossCalculation(models.Model):
     initial_boiling_temp = models.FloatField(verbose_name="Температура начала кипения (К)")
     flow_rate = models.FloatField(verbose_name="Расход налива (м³/ч)")
     pressure = models.FloatField(verbose_name="Атмосферное давление (Па)")
-    calculated_loss = models.FloatField(verbose_name="Рассчитанные потери (кг)", blank=True, null=True)
+    calculated_loss_open = models.FloatField(verbose_name="Потери при открытой струе (кг)", blank=True, null=True)
+    calculated_loss_closed = models.FloatField(verbose_name="Потери при закрытой струе (кг)", blank=True, null=True)
+    calculated_loss_combined = models.FloatField(verbose_name="Потери при комбинированном наливе (кг)", blank=True, null=True)
 
     def __str__(self):
         return f"Расчет от {self.date}"

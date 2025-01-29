@@ -3,7 +3,11 @@ from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporatio
 
 @admin.register(FuelLossCalculation)
 class FuelLossCalculationAdmin(admin.ModelAdmin):
-    list_display = ('date', 'volume', 'fill_time', 'vapor_pressure', 'vapor_temp', 'initial_boiling_temp', 'flow_rate', 'pressure', 'calculated_loss')
+    list_display = (
+        'date', 'volume', 'fill_time', 'vapor_pressure', 'vapor_temp',
+        'initial_boiling_temp', 'flow_rate', 'pressure',
+        'calculated_loss_open', 'calculated_loss_closed', 'calculated_loss_combined'
+    )
     search_fields = ('date',)
     list_filter = ('date',)
 

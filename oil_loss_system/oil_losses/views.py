@@ -99,7 +99,9 @@ def calculate_fuel_loss(request):
             initial_boiling_temp=data['initial_boiling_temp'],
             flow_rate=data['flow_rate'],
             pressure=data['pressure'],
-            calculated_loss=data['calculated_loss'],
+            calculated_loss_open=data['calculated_loss_open'],
+            calculated_loss_closed=data['calculated_loss_closed'],
+            calculated_loss_combined=data['calculated_loss_combined'],
         )
 
         # Сохраняем в базу данных

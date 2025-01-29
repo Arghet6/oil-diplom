@@ -154,57 +154,68 @@
         document.getElementById('pressure').value = 101320;
     }
 
-    function calculateFuelLoss() {
-        const volume = parseFloat(document.getElementById('volume').value);
-        const fillTime = parseFloat(document.getElementById('fillTime').value);
-        const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
-        const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
-        const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
-        const flowRate = parseFloat(document.getElementById('flowRate').value);
-        const pressure = parseFloat(document.getElementById('pressure').value);
+   function calculateFuelLoss() {
+    const volume = parseFloat(document.getElementById('volume').value);
+    const fillTime = parseFloat(document.getElementById('fillTime').value);
+    const vaporPressure = parseFloat(document.getElementById('vaporPressure').value);
+    const vaporTemp = parseFloat(document.getElementById('vaporTemp').value);
+    const initialBoilingTemp = parseFloat(document.getElementById('initialBoilingTemp').value);
+    const flowRate = parseFloat(document.getElementById('flowRate').value);
+    const pressure = parseFloat(document.getElementById('pressure').value);
 
-        // Плотность паров бензина
-        const vaporDensity = (pressure - 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
+    // Плотность паров бензина (исправленная формула)
+    const vaporDensity = (pressure * 65.1) / (8314 * vaporTemp);  // 8314 — универсальная газовая постоянная
 
-        // Коэффициент k при открытом наливе
-        const k = 0.7 + 0.213 ** (1/3);
+    // Коэффициенты для разных способов налива
+    const kOpen = Math.pow(0.7 + Math.sqrt(fillTime), 3);  // Открытая струя
+    const aClosed = 1 / 1.22;  // Коэффициент для закрытой струи
+    const kClosed = 0.85 * aClosed * Math.sqrt(fillTime);  // Закрытая струя
+    const kCombined = Math.pow(1 + Math.sqrt(fillTime), 3);  // Комбинированный налив
 
-        // Потери бензина при открытом наливе
-        const fuelLoss = k * flowRate * (vaporPressure / pressure) * vaporDensity * fillTime;
+    // Потери бензина для разных способов налива
+    const lossOpen = kOpen * volume * vaporDensity * (vaporPressure / pressure);
+    const lossClosed = kClosed * volume * vaporDensity * (vaporPressure / pressure);
+    const lossCombined = kCombined * volume * vaporDensity * (vaporPressure / pressure);
 
-        // Вывод результата
-        document.getElementById('fuelLossResult').innerText = `Потери бензина: ${fuelLoss.toFixed(3)} кг`;
+    // Вывод результата
+    document.getElementById('fuelLossResult').innerHTML = `
+        Потери при открытой струе: ${lossOpen.toFixed(3)} кг<br>
+        Потери при закрытой струе: ${lossClosed.toFixed(3)} кг<br>
+        Потери при комбинированном наливе: ${lossCombined.toFixed(3)} кг
+    `;
 
-        // Сохраняем данные на сервере
-        const data = {
-            volume: volume,
-            fill_time: fillTime,
-            vapor_pressure: vaporPressure,
-            vapor_temp: vaporTemp,
-            initial_boiling_temp: initialBoilingTemp,
-            flow_rate: flowRate,
-            pressure: pressure,
-            calculated_loss: fuelLoss.toFixed(3),
-        };
+    // Сохраняем данные на сервере
+    const data = {
+        volume: volume,
+        fill_time: fillTime,
+        vapor_pressure: vaporPressure,
+        vapor_temp: vaporTemp,
+        initial_boiling_temp: initialBoilingTemp,
+        flow_rate: flowRate,
+        pressure: pressure,
+        calculated_loss_open: lossOpen.toFixed(3),
+        calculated_loss_closed: lossClosed.toFixed(3),
+        calculated_loss_combined: lossCombined.toFixed(3),
+    };
 
-        fetch('/calculate_fuel_loss/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: JSON.stringify(data),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Данные успешно сохранены!');
-            } else {
-                alert('Произошла ошибка при сохранении данных.');
-            }
-        })
-        .catch(error => console.error('Ошибка:', error));
-    }
+    fetch('/calculate_fuel_loss/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Данные успешно сохранены!');
+        } else {
+            alert('Произошла ошибка при сохранении данных.');
+        }
+    })
+    .catch(error => console.error('Ошибка:', error));
+}
 </script>
 
 
