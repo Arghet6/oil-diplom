@@ -394,13 +394,13 @@ function calculateOilEvaporationLoss() {
     const mu323 = viscosity323 * density323;
 
     // Массовая доля углеводородов
-    const Phi = Math.pow((69.2e-3 * mu323 - 45.8e-3) / (69.2e-3 * mu293 - 45.8e-3), 0.67);
+    const Phi = Math.pow((mu293 - mu323) / (mu323 * mu293), 0.67);
 
     // Коэффициент испарения
-    const sigmaN = (Phi * duration_evaporation) / (5170 * (2 - Math.pow(0.5, 0.38) * Math.pow(19, -1.75) + duration_evaporation));
+    const sigmaN = (Phi * duration_evaporation) / (5170 * Phi * (2 - Math.pow(0.5, 0.38)) * Math.pow(temperature, -1.75) + duration_evaporation);
 
     // Потери нефти от испарения (в кг)
-    const oilLoss = sigmaN * area * density323;
+    const oilLoss = sigmaN * area * 7.65;
 
     // Вывод результата
     document.getElementById('oilEvaporationResult').innerText = `Потери нефти: ${oilLoss.toFixed(1)} кг`;
