@@ -12,7 +12,8 @@ import json
 from django.http import JsonResponse
 from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporationLossCalculation
 from django.http import HttpResponse
-
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     oil_type = request.GET.get('oil_type')
@@ -229,6 +230,9 @@ COLUMN_NAMES_RU = {
     'duration_evaporation': 'Продолжительность испарения (часы)',
     'evaporation_rate': 'Скорость ветра (м/с)',
     'area': 'Площадь испарения (м²)',
+    'calculated_loss_open': 'Открытые потери (кг)',
+    'calculated_loss_closed': 'Закрытые потери (кг)',
+    'calculated_loss_combined': 'Комбинированные потери (кг)',
 }
 
 def export_csv(request):
@@ -330,3 +334,26 @@ def export_excel(request):
     df.to_excel(response, index=False)
     return response
 
+@csrf_exempt
+@require_POST
+def delete_record(request, record_id):
+    try:
+        # Определяем тип записи
+        data = json.loads(request.body)
+        calculation_type = data.get('calculation_type')
+
+        if calculation_type == 'fuel_loss':
+            record = get_object_or_404(FuelLossCalculation, id=record_id)
+        elif calculation_type == 'corrosion_loss':
+            record = get_object_or_404(CorrosionLossCalculation, id=record_id)
+        elif calculation_type == 'oil_evaporation_loss':
+            record = get_object_or_404(OilEvaporationLossCalculation, id=record_id)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Неверный тип расчета'}, status=400)
+
+        # Удаляем запись
+        record.delete()
+        return JsonResponse({'status': 'success'}, status=200)
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

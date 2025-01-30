@@ -3,7 +3,7 @@ from . import views
 from .views import calculate_fuel_loss
 from .views import corrosion_loss_calculation
 from .views import oil_evaporation_loss_calculation
-
+from .views import delete_record
 urlpatterns = [
     path('', views.index, name='index'),
     path('record/<int:record_id>/', views.detail, name='detail'),
@@ -23,5 +23,6 @@ urlpatterns = [
     path('oil_evaporation_loss_detail/<int:id>/', views.oil_evaporation_loss_detail, name='oil_evaporation_loss_detail'),
     path('export_csv/', views.export_csv, name='export_csv'),
     path('export_excel/', views.export_excel, name='export_excel'),
+    path('delete_record/<int:record_id>/', delete_record, name='delete_record'),
 ]
 

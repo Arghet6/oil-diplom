@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Учет потерь нефти</title>
     <style>
         /* Основной стиль страницы */
@@ -124,6 +125,20 @@
         a:hover {
             text-decoration: underline;
         }
+        .delete-button {
+    padding: 8px 12px;
+    background-color: #ff4d4d; /* Красный цвет */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #cc0000; /* Темнее при наведении */
+}
     </style>
 </head>
 <body>
@@ -149,14 +164,33 @@
             <th>Тип расчета</th>
             <th>Дата</th>
             <th>Рассчитанные потери</th>
+            <th>Действия</th>
+
         </tr>
         <!-- Расчеты потерь бензина при наливе -->
         {% for record in fuel_loss_calculations %}
         <tr>
-            <td><a href="/fuel_loss_detail/{{ record.id }}">Потери бензина при наливе</a></td>
-            <td>{{ record.date }}</td>
-            <td>{{ record.calculated_loss }} кг</td>
-        </tr>
+    <td><a href="/fuel_loss_detail/{{ record.id }}">Потери бензина при наливе</a></td>
+    <td>{{ record.date }}</td>
+    <td class="combined-losses">
+        <div class="loss-item">
+            <span class="loss-type">Открытые:</span>
+            <span class="loss-value">{{ record.calculated_loss_open }} кг</span>
+        </div>
+        <div class="loss-item">
+            <span class="loss-type">Закрытые:</span>
+            <span class="loss-value">{{ record.calculated_loss_closed }} кг</span>
+        </div>
+        <div class="loss-item">
+            <span class="loss-type">Комбинированные:</span>
+            <span class="loss-value">{{ record.calculated_loss_combined }} кг</span>
+        </div>
+    </td>
+                    <td>
+            <!-- Кнопка удаления -->
+            <button class="delete-button" data-record-id="{{ record.id }}" data-calculation-type="fuel_loss">Удалить</button>
+        </td>
+</tr>
         {% endfor %}
         <!-- Потери через коррозионный свищ -->
         {% for record in corrosion_loss_calculations %}
@@ -164,6 +198,10 @@
             <td><a href="/corrosion_loss_detail/{{ record.id }}">Потери через коррозионный свищ</a></td>
             <td>{{ record.date }}</td>
             <td>{{ record.calculated_loss }} м³</td>
+                                <td>
+            <!-- Кнопка удаления -->
+            <button class="delete-button" data-record-id="{{ record.id }}" data-calculation-type="fuel_loss">Удалить</button>
+        </td>
         </tr>
         {% endfor %}
         <!-- Потери нефти от испарения -->
@@ -172,6 +210,10 @@
             <td><a href="/oil_evaporation_loss_detail/{{ record.id }}">Потери нефти от испарения</a></td>
             <td>{{ record.date }}</td>
             <td>{{ record.calculated_loss }} кг</td>
+                                <td>
+            <!-- Кнопка удаления -->
+            <button class="delete-button" data-record-id="{{ record.id }}" data-calculation-type="fuel_loss">Удалить</button>
+        </td>
         </tr>
         {% endfor %}
     </table>
@@ -199,5 +241,47 @@
         background-color: #e5c100;
     }
 </style>
+<script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-button');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const recordId = button.getAttribute('data-record-id');
+            const calculationType = button.getAttribute('data-calculation-type');
+
+            // Подтверждение удаления
+            if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+                // Отправляем запрос на сервер
+                fetch(`/delete_record/${recordId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', // CSRF-токен для защиты
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        calculation_type: calculationType,
+                    }),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Удаляем строку из таблицы
+                        const row = document.getElementById(`record-${recordId}`);
+                        if (row) {
+                            row.remove();
+                        }
+                    } else {
+                        alert('Ошибка при удалении записи.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
