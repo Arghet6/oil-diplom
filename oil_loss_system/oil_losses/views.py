@@ -14,7 +14,7 @@ from .models import FuelLossCalculation, CorrosionLossCalculation, OilEvaporatio
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required
 def index(request):
     oil_type = request.GET.get('oil_type')
     if oil_type:
@@ -75,10 +75,12 @@ def home(request):
     # Логика для страницы "Главная"
     return render(request, 'home.html')
 
+@login_required
 def calculations(request):
     # Логика для страницы расчетов
     return render(request, 'calculations.html')
 
+@login_required
 def archive(request):
     # Логика для страницы архива
     return render(request, 'archive.html')
@@ -87,6 +89,7 @@ def logout_view(request):
     logout(request)  # Выход пользователя
     return redirect('login')  # Перенаправление на страницу входа
 # 1
+@login_required
 def calculate_fuel_loss(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -114,6 +117,7 @@ def calculate_fuel_loss(request):
 
 
 # 2
+@login_required
 def corrosion_loss_calculation(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -137,7 +141,7 @@ def corrosion_loss_calculation(request):
 
 
 # 3
-
+@login_required
 def oil_evaporation_loss_calculation(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -163,7 +167,7 @@ def oil_evaporation_loss_calculation(request):
     return JsonResponse({'success': False, 'error': 'Invalid method'})
 
 # архив
-
+@login_required
 def archive(request):
     # Получаем параметр фильтра из GET-запроса
     calculation_type = request.GET.get('calculation_type', '')

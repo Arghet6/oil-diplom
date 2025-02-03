@@ -125,20 +125,8 @@
         a:hover {
             text-decoration: underline;
         }
-        .delete-button {
-    padding: 8px 12px;
-    background-color: #ff4d4d; /* Красный цвет */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
 
-.delete-button:hover {
-    background-color: #cc0000; /* Темнее при наведении */
-}
+
     </style>
 </head>
 <body>
@@ -164,7 +152,6 @@
             <th>Тип расчета</th>
             <th>Дата</th>
             <th>Рассчитанные потери</th>
-            <th>Действия</th>
 
         </tr>
         <!-- Расчеты потерь бензина при наливе -->
@@ -186,10 +173,6 @@
             <span class="loss-value">{{ record.calculated_loss_combined }} кг</span>
         </div>
     </td>
-                    <td>
-            <!-- Кнопка удаления -->
-            <button class="delete-button" data-record-id="{{ record.id }}" data-calculation-type="fuel_loss">Удалить</button>
-        </td>
 </tr>
         {% endfor %}
         <!-- Потери через коррозионный свищ -->
@@ -198,10 +181,6 @@
             <td><a href="/corrosion_loss_detail/{{ record.id }}">Потери через коррозионный свищ</a></td>
             <td>{{ record.date }}</td>
             <td>{{ record.calculated_loss }} м³</td>
-                                <td>
-            <!-- Кнопка удаления -->
-            <button class="delete-button" data-record-id="{{ record.id }}" data-calculation-type="fuel_loss">Удалить</button>
-        </td>
         </tr>
         {% endfor %}
         <!-- Потери нефти от испарения -->
@@ -210,10 +189,6 @@
             <td><a href="/oil_evaporation_loss_detail/{{ record.id }}">Потери нефти от испарения</a></td>
             <td>{{ record.date }}</td>
             <td>{{ record.calculated_loss }} кг</td>
-                                <td>
-            <!-- Кнопка удаления -->
-            <button class="delete-button" data-record-id="{{ record.id }}" data-calculation-type="fuel_loss">Удалить</button>
-        </td>
         </tr>
         {% endfor %}
     </table>

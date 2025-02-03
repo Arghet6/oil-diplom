@@ -73,6 +73,7 @@
             background-color: #e5c100;
         }
 
+
         /* Заголовок */
         h1 {
             text-align: center;
@@ -163,14 +164,17 @@
 <body>
     <!-- Шапка с навигацией и кнопкой выхода -->
     <div class="header">
+
         <div class="nav">
             <a href="{% url 'calculations' %}">Расчеты</a>
             <a href="{% url 'archive' %}">Архив</a>
         </div>
+
         <div>
             <span class="username">Добро пожаловать, {{ user.username }}!</span>
         <a href="{% url 'logout' %}" class="logout-button">Выйти</a>
         </div>
+
     </div>
 </body>
 </html>
