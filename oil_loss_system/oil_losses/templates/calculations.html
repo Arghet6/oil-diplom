@@ -173,6 +173,8 @@
 
 
     function fillDemoData() {
+        const tankerSelect = document.getElementById('tankerName');
+        tankerSelect.value = "8.5"; // Значение, соответствующее "АЦ-8,5-255Б (8.5 м³)"
         document.getElementById('volume').value = 8.5;
         document.getElementById('fillTime').value = 0.213;
         document.getElementById('vaporPressure').value = 40000;
@@ -207,9 +209,9 @@
 
     // Вывод результата
     document.getElementById('fuelLossResult').innerHTML = `
-        Потери при открытой струе: ${lossOpen.toFixed(3)} кг<br>
-        Потери при закрытой струе: ${lossClosed.toFixed(3)} кг<br>
-        Потери при комбинированном наливе: ${lossCombined.toFixed(3)} кг
+        Потери при открытой струе: ${lossOpen.toFixed(1)} кг<br>
+        Потери при закрытой струе: ${lossClosed.toFixed(1)} кг<br>
+        Потери при комбинированном наливе: ${lossCombined.toFixed(1)} кг
     `;
 
     // Сохраняем данные на сервере
@@ -221,9 +223,9 @@
         initial_boiling_temp: initialBoilingTemp,
         flow_rate: flowRate,
         pressure: pressure,
-        calculated_loss_open: lossOpen.toFixed(3),
-        calculated_loss_closed: lossClosed.toFixed(3),
-        calculated_loss_combined: lossCombined.toFixed(3),
+        calculated_loss_open: lossOpen.toFixed(1),
+        calculated_loss_closed: lossClosed.toFixed(1),
+        calculated_loss_combined: lossCombined.toFixed(1),
     };
 
     fetch('/calculate_fuel_loss/', {
@@ -462,6 +464,8 @@
     }
 
     function fillDemoDataEvaporation() {
+        const densitySelect = document.getElementById('densityRange');
+        densitySelect.value = "750-759"; // Значение, соответствующее "750-759 (0.831)"
         // Предопределенные значения для демонстрации
         document.getElementById('temperature').value = 19;
         document.getElementById('densityStandard').value = 865;
