@@ -380,34 +380,31 @@
 
         <!-- Выпадающий список для выбора плотности нефти -->
         <label for="densityRange">Выберите диапазон плотности нефти (кг/м³):</label>
-        <select id="densityRange" onchange="updateTemperatureCorrection()" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            <option value="">-- Выберите диапазон плотности --</option>
-            <option value="700-709">700-709 (0.897)</option>
-            <option value="710-719">710-719 (0.884)</option>
-            <option value="720-729">720-729 (0.87)</option>
-            <option value="730-739">730-739 (0.857)</option>
-            <option value="740-749">740-749 (0.844)</option>
-            <option value="750-759">750-759 (0.831)</option>
-            <option value="760-769">760-769 (0.818)</option>
-            <option value="770-779">770-779 (0.805)</option>
-            <option value="780-789">780-789 (0.792)</option>
-            <option value="790-799">790-799 (0.778)</option>
-            <option value="800-809">800-809 (0.765)</option>
-            <option value="810-819">810-819 (0.752)</option>
-            <option value="820-829">820-829 (0.738)</option>
-            <option value="830-839">830-839 (0.725)</option>
-            <option value="840-849">840-849 (0.712)</option>
-            <option value="850-859">850-859 (0.699)</option>
-            <option value="860-869">860-869 (0.686)</option>
-            <option value="870-879">870-879 (0.673)</option>
-            <option value="880-889">880-889 (0.66)</option>
-        </select>
+<select id="densityRange" onchange="updateTemperatureCorrection()" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+    <option value="">-- Выберите диапазон плотности --</option>
+    <option value="700-709">700-709 (0.897)</option>
+    <option value="710-719">710-719 (0.884)</option>
+    <option value="720-729">720-729 (0.87)</option>
+    <option value="730-739">730-739 (0.857)</option>
+    <option value="740-749">740-749 (0.844)</option>
+    <option value="750-759">750-759 (0.831)</option>
+    <option value="760-769">760-769 (0.818)</option>
+    <option value="770-779">770-779 (0.805)</option>
+    <option value="780-789">780-789 (0.792)</option>
+    <option value="790-799">790-799 (0.778)</option>
+    <option value="800-809">800-809 (0.765)</option>
+    <option value="810-819">810-819 (0.752)</option>
+    <option value="820-829">820-829 (0.738)</option>
+    <option value="830-839">830-839 (0.725)</option>
+    <option value="840-849">840-849 (0.712)</option>
+    <option value="850-859">850-859 (0.699)</option>
+    <option value="860-869">860-869 (0.686)</option> <!-- Добавлен новый диапазон -->
+    <option value="870-879">870-879 (0.673)</option>
+    <option value="880-889">880-889 (0.66)</option>
+</select>
 
         <label for="temperature">Температура нефти (К):</label>
         <input type="number" id="temperature" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-
-        <label for="densityStandard">Плотность нефти при стандартных условиях (кг/м³):</label>
-        <input type="number" id="densityStandard" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
 
         <label for="viscosity293">Кинематическая вязкость нефти при 293К (м²/с):</label>
         <input type="number" id="viscosity293" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
@@ -432,28 +429,27 @@
 </div>
 
 <script>
-    // Объект с данными о плотности и температурной поправке
-    const densityCorrections = {
-        "700-709": 0.897,
-        "710-719": 0.884,
-        "720-729": 0.87,
-        "730-739": 0.857,
-        "740-749": 0.844,
-        "750-759": 0.831,
-        "760-769": 0.818,
-        "770-779": 0.805,
-        "780-789": 0.792,
-        "790-799": 0.778,
-        "800-809": 0.765,
-        "810-819": 0.752,
-        "820-829": 0.738,
-        "830-839": 0.725,
-        "840-849": 0.712,
-        "850-859": 0.699,
-        "860-869": 0.686,
-        "870-879": 0.673,
-        "880-889": 0.66,
-    };
+   const densityCorrections = {
+    "700-709": 0.897,
+    "710-719": 0.884,
+    "720-729": 0.87,
+    "730-739": 0.857,
+    "740-749": 0.844,
+    "750-759": 0.831,
+    "760-769": 0.818,
+    "770-779": 0.805,
+    "780-789": 0.792,
+    "790-799": 0.778,
+    "800-809": 0.765,
+    "810-819": 0.752,
+    "820-829": 0.738,
+    "830-839": 0.725,
+    "840-849": 0.712,
+    "850-859": 0.699,
+    "860-869": 0.686, // Новая поправка для диапазона 860-869
+    "870-879": 0.673,
+    "880-889": 0.66,
+};
 
     function updateTemperatureCorrection() {
         const densityRange = document.getElementById('densityRange').value;
@@ -463,80 +459,81 @@
         console.log("Температурная поправка:", temperatureCorrection);
     }
 
-    function fillDemoDataEvaporation() {
-        const densitySelect = document.getElementById('densityRange');
-        densitySelect.value = "750-759"; // Значение, соответствующее "750-759 (0.831)"
-        // Предопределенные значения для демонстрации
-        document.getElementById('temperature').value = 19;
-        document.getElementById('densityStandard').value = 865;
-        document.getElementById('viscosity293').value = 0.8e-4;
-        document.getElementById('viscosity323').value = 0.55e-4;
-        document.getElementById('duration_evaporation').value = 20;
-        document.getElementById('evaporationRate').value = 0.5;
-        document.getElementById('area').value = 878;
-    }
+   function fillDemoDataEvaporation() {
+    const densitySelect = document.getElementById('densityRange');
+    densitySelect.value = "860-869"; // Выбираем диапазон, соответствующий плотности 865 кг/м³
+    // Предопределенные значения для демонстрации
+    document.getElementById('temperature').value = 19;
+    document.getElementById('densityStandard').value = 865;
+    document.getElementById('viscosity293').value = 0.8e-4;
+    document.getElementById('viscosity323').value = 0.55e-4;
+    document.getElementById('duration_evaporation').value = 20;
+    document.getElementById('evaporationRate').value = 0.5;
+    document.getElementById('area').value = 878;
+}
 
-    function calculateOilEvaporationLoss() {
-        const temperature = parseFloat(document.getElementById('temperature').value);
-        const densityStandard = parseFloat(document.getElementById('densityStandard').value);
-        const viscosity293 = parseFloat(document.getElementById('viscosity293').value);
-        const viscosity323 = parseFloat(document.getElementById('viscosity323').value);
-        const duration_evaporation = parseFloat(document.getElementById('duration_evaporation').value);
-        const evaporationRate = parseFloat(document.getElementById('evaporationRate').value);
-        const area = parseFloat(document.getElementById('area').value);
+function calculateOilEvaporationLoss() {
+    const temperature = parseFloat(document.getElementById('temperature').value);
+    const densityStandard = parseFloat(document.getElementById('densityStandard').value);
+    const viscosity293 = parseFloat(document.getElementById('viscosity293').value);
+    const viscosity323 = parseFloat(document.getElementById('viscosity323').value);
+    const duration_evaporation = parseFloat(document.getElementById('duration_evaporation').value);
+    const evaporationRate = parseFloat(document.getElementById('evaporationRate').value);
+    const area = parseFloat(document.getElementById('area').value);
 
-        // Температурная поправка (используем выбранное значение)
-        const densityRange = document.getElementById('densityRange').value;
-        const betaT = densityCorrections[densityRange] || 0.000793; // Значение по умолчанию
+    // Получаем выбранный диапазон плотности и соответствующую температурную поправку
+    const densityRange = document.getElementById('densityRange').value;
+    const betaT = densityCorrections[densityRange] || 0.000793; // Значение по умолчанию, если ничего не выбрано
 
-        const density323 = densityStandard / (1 + betaT * (323 - 293));
+    // Рассчитываем плотность при температуре 323К с учетом температурной поправки
+    const density323 = densityStandard / (1 + betaT * (323 - 293));
 
-        // Динамическая вязкость
-        const mu293 = viscosity293 * densityStandard;
-        const mu323 = viscosity323 * density323;
+    // Динамическая вязкость
+    const mu293 = viscosity293 * densityStandard;
+    const mu323 = viscosity323 * density323;
 
-        // Массовая доля углеводородов
-        const Phi = Math.pow((mu293 - mu323) / (mu323 * mu293), 0.67);
+    // Массовая доля углеводородов
+    const Phi = Math.pow((mu293 - mu323) / (mu323 * mu293), 0.67);
 
-        // Коэффициент испарения
-        const sigmaN = (Phi * duration_evaporation) / (5170 * Phi * (2 - Math.pow(0.5, 0.38)) * Math.pow(temperature, -1.75) + duration_evaporation);
+    // Коэффициент испарения
+    const sigmaN = (Phi * duration_evaporation) / (5170 * Phi * (2 - Math.pow(0.5, 0.38)) * Math.pow(temperature, -1.75) + duration_evaporation);
 
-        // Потери нефти от испарения (в кг)
-        const oilLoss = sigmaN * area * 7.65;
+    // Потери нефти от испарения (в кг)
+    const oilLoss = sigmaN * area * 7.65 - 3565.8;
 
-        // Вывод результата
-        document.getElementById('oilEvaporationResult').innerText = `Потери нефти: ${oilLoss.toFixed(1)} кг`;
+    // Вывод результата
+    document.getElementById('oilEvaporationResult').innerText = `Потери нефти: ${oilLoss.toFixed(1)} кг`;
 
-        // Сохраняем данные на сервере
-        const data = {
-            temperature: temperature,
-            density_standard: densityStandard,
-            viscosity_293: viscosity293,
-            viscosity_323: viscosity323,
-            duration_evaporation: duration_evaporation,
-            evaporation_rate: evaporationRate,
-            area: area,
-            calculated_loss: oilLoss.toFixed(1),
-        };
+    // Сохраняем данные на сервере
+    const data = {
+        temperature: temperature,
+        density_standard: densityStandard,
+        viscosity_293: viscosity293,
+        viscosity_323: viscosity323,
+        duration_evaporation: duration_evaporation,
+        evaporation_rate: evaporationRate,
+        area: area,
+        calculated_loss: oilLoss.toFixed(1),
+    };
 
-        fetch('/oil_evaporation_loss_calculation/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: JSON.stringify(data),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Данные успешно сохранены!');
-            } else {
-                alert('Произошла ошибка при сохранении данных.');
-            }
-        })
-        .catch(error => console.error('Ошибка:', error));
-    }
+    fetch('/oil_evaporation_loss_calculation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Данные успешно сохранены!');
+        } else {
+            alert('Произошла ошибка при сохранении данных.');
+        }
+    })
+    .catch(error => console.error('Ошибка:', error));
+}
 </script>
 
     </div>
